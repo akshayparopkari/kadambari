@@ -6,7 +6,6 @@ Date: 03/11/2015
 
 Author: Akshay Paropkari
 """
-
 import argparse
 import sys
 from collections import defaultdict
