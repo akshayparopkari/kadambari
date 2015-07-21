@@ -5,6 +5,8 @@
 #           more information about cutadapt, please refer to this -
 #           http://cutadapt.readthedocs.org/en/latest/guide.html#trimming-paired-end-reads
 
+# Date: 07/17/2015
+
 # Author: Akshay Paropkari
 
 # Set up for loop in parent directory
