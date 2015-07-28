@@ -10,7 +10,6 @@
 # Author: Akshay Paropkari
 
 # Set up for loop in parent directory
-
 for dir in */
 do
     printf "%s\n" "$dir"    # print the folder name which is being processed
