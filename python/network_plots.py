@@ -1,4 +1,4 @@
-#! usr/bin/env python
+#!/usr/bin/env python
 '''
 Abstract: Create network plots based on correlation matrix.
 
@@ -208,7 +208,8 @@ def main():
     args = prog_options()
 
     draw_network_graphs(args.in_corr_mat, args.in_gramox_fnh, args.phy_lvl,
-                        args.cat_name, show_labels=True, filter_pct=0.9)
+                        args.cat_name, show_labels=args.show_labels,
+                        filter_pct=args.fil_pct)
 
 
 if __name__ == '__main__':

@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 """
 Abstract: Remove duplicate gene occurrences and output into a tsv file.
 

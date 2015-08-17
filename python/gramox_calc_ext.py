@@ -1,4 +1,4 @@
-#!usr/bin/env python
+#!/usr/bin/env python
 """
 Abstract: Get gram stain and oxygen requirement (gramox) data by category.
 

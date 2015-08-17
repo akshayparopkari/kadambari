@@ -1,4 +1,4 @@
-#!usr/bin/env/python
+#!/usr/bin/env python
 """
 Abstract: Calculate gram stain and oxygen requirement (gramox) for all OTU
           from their relative abundance file and write the output to file.
