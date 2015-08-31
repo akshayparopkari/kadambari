@@ -45,12 +45,10 @@ def main():
             if item == '':
                 entry[i] = 'NA'    # For missing gram status, oxygen req data.
         if len(entry) == 1:
-            length = range(4 - len(entry))
+            length = range(3 - len(entry))
             for l in reversed(length):
                 l += 1
                 entry.insert(l, 'NA')    # For unidentified OTUs with no info.
-        elif len(entry) == 3:
-            entry.insert(4, 'NA')        # For missing source info.
 
     with open(args.out_fnh, 'w') as ogf:
         for entry in gramoxdata:
