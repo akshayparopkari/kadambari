@@ -22,6 +22,8 @@ def handle_program_options():
                         help='Path to relative abundance data file.')
     parser.add_argument('out_fnh',
                         help='Path to output file.')
+    parser.add_argument('-l', '--taxa_lvl', default='s',
+                        help='Path to relative abundance data file.')
     return parser.parse_args()
 
 
@@ -48,12 +50,16 @@ def main():
 
 # Read gramox data from master file
     with open(args.master_fnh, 'rU') as bgof:
-        bgodata = {line.strip().split('\t')[0]: '\t'.join(line.strip().split('\t')[1:4])
-                   for line in bgof.readlines()}
+        if args.taxa_lvl == 'g':
+            bgodata = {line.strip().split('\t')[0]: '\t'.join(line.strip().split('\t')[2:4])
+                       for line in bgof.readlines()}
+        else:
+            bgodata = {line.strip().split('\t')[1]: '\t'.join(line.strip().split('\t')[2:4])
+                       for line in bgof.readlines()}
 
 # Write classified gramox data to tsv file
     with open(args.out_fnh, 'w') as gramoxout:
-        gramoxout.write('#OTU\tGram Status\tOxygen Requirement\tSource\n')
+        gramoxout.write('#OTU\tGram Status\tOxygen Requirement\n')
         for otu in otus:
             if otu in bgodata.keys():
                 gramoxout.write('{}\t{}\n'.format(otu, bgodata[otu]))
