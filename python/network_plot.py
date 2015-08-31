@@ -61,9 +61,8 @@ def nodes_classify(gramox_inf, nodelist, lvl):
                 unk.append(item)
     return g_pos, g_neg, ctk, unk
 
-def draw_network_graphs(pearson_inf, gramox_inf, lvl, category=None,
-                        filter_pct=None, title=None, show_labels=False,
-                        save_fig=None):
+def draw_network_graphs(pearson_inf, gramox_inf, lvl, filter_pct=None,
+                        category=None):
     '''
     This function accepts statistically significant Pearson's correlation
     data to create graph nodes and edges and draws them out on a network
@@ -83,22 +82,15 @@ def draw_network_graphs(pearson_inf, gramox_inf, lvl, category=None,
     :param lvl: Choose between genus(g) or species(s) phylogenetic level to
                 use for classifying OTU's. Defaults to species(s) level.
 
-    :type category: str
-    :param category: Provide for which category you want to create a
-                     network graph, which should be one of the options
-                     from the first column of pearsoncorr data file.
-
     :type filter_pct: float
     :param filter_pct: Specify the minimum value of correlation strength
                        to display. By default, all correlations will be
                        portrayed. Range is (0,1).
 
-    :type title: str
-    :param title: Title for the figure.
-
-    :type save_fig: file path
-    :param save_fig: Path for file to be saved as. Specify file format at
-                     the end of the file path and name (.png, .jpg, .svg, etc)
+    :type category: str
+    :param category: Provide for which category you want to create a
+                     network graph, which should be one of the options
+                     from the first column of pearsoncorr data file.
 
     :type return: network graph/figure
     :return: Returns a network graph with OTU or cytokines as nodes and
@@ -146,7 +138,7 @@ def draw_network_graphs(pearson_inf, gramox_inf, lvl, category=None,
 
     # Draw network graph
     plt.figure(figsize=(20, 20))
-    pos = nx.spring_layout(G, iterations=200, k=0.3)
+    pos = nx.spring_layout(G, iterations=200, k=0.2)
     nx.draw_networkx_nodes(G, pos, nodelist=g_pos, node_color='#3366ff',
                            node_size=500) # gpos: dark blue
     nx.draw_networkx_nodes(G, pos, nodelist=g_neg, node_color='#99ccff',
@@ -159,14 +151,10 @@ def draw_network_graphs(pearson_inf, gramox_inf, lvl, category=None,
                            edge_color='#008000')  # poscorr: dark green
     nx.draw_networkx_edges(G, pos, alpha=0.5, edgelist=neg_corr,
                            edge_color='r')        # negcorr: red
-    if show_labels:
-        nx.draw_networkx_labels(G, pos)
+
+    nx.draw_networkx_labels(G, pos)
     font = {'color': 'k', 'fontweight': 'bold', 'fontsize': 24}
-    if title is not None:
-        plt.title(title, font)
     plt.axis('off')
-    if save_fig is not None:
-        plt.savefig(save_fig)
     plt.show()
 
 
@@ -181,25 +169,17 @@ def prog_options():
                         help='Master file of all gramox data for all OTU\'s '
                              'in the following tab-separated format: '
                        'Genus->Species->Gram Status->Oxygen Requirement->Source')
-    parser.add_argument('cat_name',
-                        help='Program will plot network graph for this '
-                             'category only')
-    parser.add_argument('-pl', '--phy_lvl', default='s',
+    parser.add_argument('phy_lvl',
                         help='Choose between genus(g) or species(s) '
                              'phylogenetic level to use for classifying '
                              'OTU\'s. Defaults to species(s) level')
-    parser.add_argument('-fp', '--fil_pct', default=None,
+    parser.add_argument('fil_pct', type=float,
                         help='Specify the minimum value of correlation '
                              'strength to display. By default, all '
                              'correlations will be portrayed. Range is (0,1)')
-    parser.add_argument('-pt', '--plot_title', default=None,
-                        help='Focal category name')
-    parser.add_argument('-sl', '--show_labels', default=False,
-                        help='Display node labels in network plot')
-    parser.add_argument('-s', '--save_fig', default=None,
-                        help='Path for file to be saved as. Specify file '
-                             'format at the end of the file path and name '
-                             '(.png, .jpg, .svg, etc)')
+    parser.add_argument('cat_name',
+                        help='Program will plot network graph for this '
+                             'category only')
     return parser.parse_args()
 
 
@@ -208,9 +188,7 @@ def main():
     args = prog_options()
 
     draw_network_graphs(args.in_corr_mat, args.in_gramox_fnh, args.phy_lvl,
-                        args.cat_name, show_labels=args.show_labels,
-                        filter_pct=args.fil_pct)
-
+                        args.fil_pct, args.cat_name)
 
 if __name__ == '__main__':
     main()
