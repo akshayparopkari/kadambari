@@ -77,14 +77,14 @@ def main():
         sys.exit(err_msg.format(ioe))
 
     try:
-        with open(args.gramox_fnh):
+        with open(args.in_gramox_fnh):
             pass
     except IOError as ioe:
         err_msg = '\nError opening completed gramox file: {}\n'
         sys.exit(err_msg.format(ioe))
 
 # Read gramox data.
-    with open(args.gramox_fnh, 'rU') as gdf:
+    with open(args.in_gramox_fnh, 'rU') as gdf:
         gramox_data = {line.strip().split('\t')[0]: line.strip().split('\t')[1:3]
                        for line in gdf.readlines()[1:]}
 
