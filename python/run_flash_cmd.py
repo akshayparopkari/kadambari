@@ -10,8 +10,12 @@ Author: Akshay Paropkari
 
 import os
 import subprocess as sp
-import shlex
 import argparse
+try:
+    import shlex
+except ImportError as ie:
+    sys.exit('Please install {} module before executing this script.'\
+             .format(ie))
 
 
 def prog_options():
