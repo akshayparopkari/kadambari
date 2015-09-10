@@ -23,19 +23,19 @@ do
 
 #   Trimming spacers regions (attached to 5' ends) in the sequence
     printf "Trimming V1-V3 spacers in Plate 1 for %s and %s\n" "${FILE1[*]}" "${FILE2[*]}"
-    cutadapt -g 'ADAPTER_FWD' -G 'ADAPTER_REV' -o P1_R1_V1-V3_out.fastq -p P1_R2_V1-V3_out.fastq "${FILE1[*]}" "${FILE2[*]}" > plate1_V1-V3_summary.txt
+    cutadapt -g 'TCGATCGGAAKRGTTYGATYNTGGCTCAG' -G 'CGGACTTGATGTACGAACGTNTBACCGCDGCTGCTG' -o P1_R1_V1-V3_out.fastq -p P1_R2_V1-V3_out.fastq --trimmed-only "${FILE1[*]}" "${FILE2[*]}" > plate1_V1-V3_summary.txt
     printf "Done!\n"
 
     printf "Trimming V4-V5 spacers in Plate 1 for %s and %s\n" "${FILE1[*]}" "${FILE2[*]}"
-    cutadapt -g 'ADAPTER_FWD' -G 'ADAPTER_REV' -o P1_R1_V4-V5_out.fastq -p P1_R2_V4-V5_out.fastq "${FILE1[*]}" "${FILE2[*]}" > plate1_V4-V5_summary.txt
+    cutadapt -g 'CGAGCAATCCACTCGAGTGCCAGCMGCCGCGGTAA' -G 'GATTAGCTGCACGGACTACHVGGGTWTCTAAT' -o P1_R1_V4-V5_out.fastq -p P1_R2_V4-V5_out.fastq --trimmed-only "${FILE1[*]}" "${FILE2[*]}" > plate1_V4-V5_summary.txt
     printf "Done!\n"
 
     printf "Trimming V1-V3 spacers in Plate 2 for %s and %s\n" "${FILE1[*]}" "${FILE2[*]}"
-    cutadapt -g 'ADAPTER_FWD' -G 'ADAPTER_REV' -o P2_R1_V1-V3_out.fastq -p P2_R2_V1-V3_out.fastq "${FILE1[*]}" "${FILE2[*]}" > plate2_V1-V3_summary.txt
+    cutadapt -g 'ATCTGTCATGGAAKRGTTYGATYNTGGCTCAG' -G 'TCAGTAGCTACGCACGTNTBACCGCDGCTGCTG' -o P2_R1_V1-V3_out.fastq -p P2_R2_V1-V3_out.fastq --trimmed-only "${FILE1[*]}" "${FILE2[*]}" > plate2_V1-V3_summary.txt
     printf "Done!\n"
 
     printf "Trimming V4-V5 spacers in Plate 2 for %s and %s\n" "${FILE1[*]}" "${FILE2[*]}"
-    cutadapt -g 'ADAPTER_FWD' -G 'ADAPTER_REV' -o P2_R1_V4-V5_out.fastq -p P2_R2_V4-V5_out.fastq "${FILE1[*]}" "${FILE2[*]}" > plate2_V4-V5_summary.txt
+    cutadapt -g 'GATCAGTCGTCTCACTCGAGTGCCAGCMGCCGCGGTAA' -G 'ATCAGCAACGGACTACHVGGGTWTCTAAT' -o P2_R1_V4-V5_out.fastq -p P2_R2_V4-V5_out.fastq --trimmed-only "${FILE1[*]}" "${FILE2[*]}" > plate2_V4-V5_summary.txt
 
     printf "FINISH\n\n"
 
