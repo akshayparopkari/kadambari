@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 '''
-Abstract: Iterate through all folders and execute a shell/python command.
+Abstract: Iterate through all folders and execute FLASh command.
 
 Date: 08/06/2015
 
@@ -21,7 +21,8 @@ except ImportError as ie:
 def prog_options():
     parser = argparse.ArgumentParser(
                 description='Iterate through each folder in a file and run '
-                            'FLASh command on sample fastq files.')
+                            'FLASh command on zipped Read 1 and Read 2 fastq '
+                            'files.')
     parser.add_argument('sample_dir',
                         help='Directory containing sample folders.')
     return parser.parse_args()
@@ -33,7 +34,7 @@ def main():
     for root, dirs, files in os.walk(args.sample_dir):
         if root != args.sample_dir:
             os.chdir(root)
-            print root
+            print root[29:32]
 
             for file in files:
                 if file.endswith('R1_001.fastq.gz'):
