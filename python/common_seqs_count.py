@@ -17,7 +17,7 @@ import argparse
 try:
     import shlex
 except ImportError as ie:
-    sys.exit('Please install {} module before executing this script.'\
+    sys.exit('Please install {} module before executing this script.'
              .format(ie))
 
 
@@ -59,8 +59,6 @@ def prog_options():
                             'counts of most common sequences found in reads.')
     parser.add_argument('sample_dir',
                         help='Directory containing sample folders.')
-    parser.add_argument('counts'
-                        help='Option to get most common sequence counts.')
     parser.add_argument('-nb', '--base_counts', type=int, default=15,
                         help='Number of bases from start to include in count'
                              ' result. Default is 15 bases.')
@@ -69,7 +67,7 @@ def prog_options():
                              'include in output. Default is top 20 most '
                              'common ("-nb" bases long) sequences.')
     parser.add_argument('out_fnh',
-                         help='Output file path to save most common count '
+                        help='Output file path to save most common count '
                               'results.')
     return parser.parse_args()
 
@@ -81,25 +79,25 @@ def main():
     for root, dirs, files in os.walk(args.sample_dir):
         if root != args.sample_dir:
             os.chdir(root)
-            sample = root[24:27]
-            print sample
+            print root[24:27]
 
+    # Get relevant file name
             for file in files:
-                if file.endswith('trimmed.fastq'):
+                if file.endswith('.fastq'):
                     trim_out = file
 
     # Option to get counts of adapters in FLASh output merged file
-            if args.counts:
-                most_common_seqs = count_common_seqs(args.base_counts,
-                                                     args.top_common_count,
-                                                     trim_out)
-                with open(args.most_common_out, 'w') as outf:
-                    outf.write('Read Count\tCommon Sequence\t'
-                               'Common Sequence Counts\tPercent in reads')
-                    for d in most_common_seqs:
-                        outf.write('{}\t{}\t{}\t{}'\
-                                   .format(d[0], d[1], d[2], d[3]))
-    return
+            most_common_seqs = count_common_seqs(args.base_counts,
+                                                 args.top_common_count,
+                                                 trim_out)
+            with open(args.out_fnh, 'w') as outf:
+                outf.write('{}\n'.format(trim_out))
+                outf.write('Read Count\tCommon Sequence\t'
+                           'Common Sequence Counts\tPercent in reads')
+                for d in most_common_seqs:
+                    outf.write('{}\t{}\t{}\t{}'
+                               .format(d[0], d[1], d[2], d[3]))
+            return
 
 if __name__ == '__main__':
     sys.exit(main())
