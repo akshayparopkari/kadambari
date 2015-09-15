@@ -28,6 +28,8 @@ def prog_options():
     parser.add_argument('adapter_list',
                         help='Path to file containing one adapter sequences '
                              'per line.')
+    parser.add_argument('nos', choices=['1', '2'],
+                        help='Number of samples in the fastq files.')
     return parser.parse_args()
 
 
@@ -45,13 +47,11 @@ def main():
     for root, dirs, files in os.walk(args.sample_dir):
         if root != args.sample_dir:
             os.chdir(root)
-            print root[24:27]
+            print root[29:33]
 
             for file in files:
-                if file.endswith('R1_001.fastq.gz'):
-                    R1 = file
-                elif file.endswith('R2_001.fastq.gz'):
-                    R2 = file
+                if file.endswith('extendedFrags.fastq'):
+                    mergedfile = file
 
     # Read adapter sequences from file
             with open(args.adapter_list, 'r') as acf:
@@ -60,21 +60,29 @@ def main():
 
     # Map seq to their names
             f_names = ['P1_V1-V3', 'P1_V4-V5', 'P2_V1-V3', 'P2_V4-V5']
-            zipped_adapters = zip(adapters[0::2], adapters[1::2])
-            sp_seq = {f: s for f, s in zip(f_names, zipped_adapters)}
+            fwd_adapters = adapters[0::2]
+            sp_seq = {f: s for f, s in zip(f_names, fwd_adapters)}
 
     # Generate and run cutadapt command to run
             for k, v in sp_seq.iteritems():
-                cmd = 'cutadapt -g {} -G {} -o {}_R1.fastq \
-                       -p {}_R2.fastq --trimmed-only {} {}'\
-                       .format(v[0], v[1], k, k, R1, R2)
-                kwargs = shlex.split(cmd)
-                print kwargs
-                out = sp.check_output(kwargs)
-                with open(k+'_trimlog.txt', 'w') as outlog:
-                    outlog.write('{}'.format( out))
-
-            return
+                if args.nos == '2':
+                    cmd = 'cutadapt -g {} -o {}.fastq --discard-untrimmed {}'\
+                          .format(v, k, mergedfile)
+                    kwargs = shlex.split(cmd)
+                    print kwargs
+#                     out = sp.check_output(kwargs)
+#                     print out
+#                     with open(k+'_trimlog.txt', 'w') as outlog:
+#                         outlog.write('{}'.format(out))
+                elif args.nos == '1' and k in ['P1_V1-V3', 'P1_V4-V5']:
+                    cmd = 'cutadapt -g {} -o {}.fastq --discard-untrimmed {}'\
+                          .format(v, k, mergedfile)
+                    kwargs = shlex.split(cmd)
+                    out = sp.check_output(kwargs)
+                    print out
+                    with open(k+'_trimlog.txt', 'w') as outlog:
+                        outlog.write('{}'.format(out))
+    return
 
 if __name__ == '__main__':
     sys.exit(main())
