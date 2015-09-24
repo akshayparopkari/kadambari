@@ -1,7 +1,9 @@
 #!/usr/bin/env python
 """
 Abstract: Plot categorized gramox data. Currently, this script plots only 4
-          data groups.
+          data groups. Special thanks to Peter Kerpedjiev, whose blog post on
+          helped clarify a lot. Here is the link to it -
+          http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
 Date: 09/24/2015
 
@@ -11,9 +13,7 @@ import sys
 import argparse
 import numpy as np
 import pandas as pd
-import matplotlib.cm as cm
 import matplotlib.pyplot as plt
-# from collections import defaultdict
 
 
 def handle_program_options():
@@ -39,22 +39,17 @@ def main():
     gdata = np.array(cat_gramox_data)
 
 # Data to plot
-#     conditions = [' '.join(cond.split('_')) for cond in np.unique(gdata[:,0])]
-#     categories = [' '.join(cat.split('_')) for cat in np.unique(gdata[:,1])]
-    conditions = np.unique(gdata[:,0])
-    categories = np.unique(gdata[:,1])
-    print 'conditions: ', conditions
-    print 'categories: ', categories
-    n_groups = len(conditions)
+    conditions = np.unique(gdata[:, 0])
+    categories = np.unique(gdata[:, 1])
     width = (1 - 0.3) / (len(conditions))
     colors = ['#f1b6da', '#d01c8b', '#b8e186', '#4dac26']
 
 # Create plot
     fig = plt.figure(figsize={30, 15})
     ax = fig.add_subplot(111)
-    for i,cond in enumerate(conditions):
+    for i, cond in enumerate(conditions):
         ind = range(1, len(categories)+1)
-        vals = gdata[gdata[:,0] == cond][:,2].astype(np.float)
+        vals = gdata[gdata[:, 0] == cond][:, 2].astype(np.float)
         pos = [j - (1 - 0.3) / 2. + i * width for j in ind]
         ax.bar(pos, vals, width=width, label=cond, color=colors[i])
         for x, y in zip(pos, vals):
