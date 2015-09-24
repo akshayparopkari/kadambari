@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 """
 Abstract: Plot categorized gramox data. Currently, this script plots only 4
-          data groups. Special thanks to Peter Kerpedjiev, whose blog post on
-          helped clarify a lot. Here is the link to it -
+          data groups. Special thanks to Peter Kerpedjiev, whose blog post
+          'Creating a Grouped Bar Chart in Matplotlib' helped clarify a lot.
+          Here is the link to it -
           http://emptypipes.org/2013/11/09/matplotlib-multicategory-barchart/
 
 Date: 09/24/2015
