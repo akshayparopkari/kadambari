@@ -49,14 +49,14 @@ def main():
     fig = plt.figure(figsize={30, 15})
     ax = fig.add_subplot(111)
     for i, cond in enumerate(conditions):
-        ind = range(1, len(categories)+1)
+        ind = range(1, len(categories) + 1)
         vals = gdata[gdata[:, 0] == cond][:, 2].astype(np.float)
         pos = [j - (1 - 0.3) / 2. + i * width for j in ind]
         ax.bar(pos, vals, width=width, label=cond, color=colors[i])
         for x, y in zip(pos, vals):
             ax.text(x+0.05, y+1, int(y), fontsize=20)
     ax.set_ylabel("Counts", size=24)
-    ax.set_ylim(top=max(gdata[:, 2])+15)
+    ax.set_ylim(top=max(gdata[:, 2]) + 15)
     ax.set_xticks(ind)
     ax.set_xticklabels(categories, size=22)
     ax.legend(loc='best', fontsize=22)

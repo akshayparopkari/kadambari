@@ -34,7 +34,7 @@ def main():
     for root, dirs, files in os.walk(args.sample_dir):
         if root != args.sample_dir:
             os.chdir(root)
-            print root[29:32]
+            print root[24:27]
 
             for file in files:
                 if file.endswith('R1_001.fastq.gz'):
