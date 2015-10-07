@@ -42,7 +42,8 @@ def prog_options():
                         help='Path to tab-separated sample ID to adapter '
                              'mapping file.  Please note that reverse adapters'
                              ' must be reverse complemented wherever necessary'
-                             '. Format of the file: well->sampleid->adapters')
+                             '. Format of the file: well->sampleid->adapters.'
+                             'A "-" must be used for empty cells')
     parser.add_argument('-t', '--threads', type=int, default=4,
                         help='Optionally, you may specify number of threads to'
                              ' be used for trimming.')
@@ -88,30 +89,62 @@ def main():
                 if file.endswith('extendedFrags.fastq'):
                     mergedfile = file
 
-# Run skewer to trim 5' end of reads
+# Calculate skewer command for each sample
             for sample in map_data:
-                if sample['well'] == well and sample['sampleid'] != '-':
-                    cmd1 = 'skewer -t {} -b -m head -l 200 -x {} \
-                           -o {}_27F {}'.format(args.threads, sample['27F'],
-                                                sample['sampleid'], mergedfile)
-                    cmd2 = 'skewer -t {} -b -m head -l 200 -x {} \
-                            -o {}_515F {}'.format(args.threads, sample['515F'],
-                                                  sample['sampleid'],
-                                                  mergedfile)
+                if sample['well'] == well:
+                    # Plate 1 trimming
+                    cmd1 = 'skewer -t {} -b -m head -l 200 -x {} -o {}_27F {}'\
+                           .format(args.threads, sample['27F_P1'],
+                                   sample['P1_sample'], mergedfile)       # P1
                     kwargs1 = shlex.split(cmd1)
-                    kwargs2 = shlex.split(cmd2)
-                    print 'Well: {} | SampleID: {} | Primer: {}'\
-                          .format(sample['well'], sample['sampleid'],
-                                  adapters[sample['27F']])
+                    print 'Well: {} | Primer: {} | SampleID: {}'\
+                          .format(sample['well'], adapters[sample['27F_P1']],
+                                  sample['P1_sample'])                    # P1
                     print kwargs1, '\n'
                     out1 = sp.check_output(kwargs1)
                     print out1
+
+                    cmd2 = 'skewer -t {} -b -m head -l 200 -x {} -o {}_515F {}'\
+                           .format(args.threads, sample['515F_P1'],
+                                   sample['P1_sample'], mergedfile)      # P1
+                    kwargs2 = shlex.split(cmd2)
                     print 'Well: {} | SampleID: {} | Primer: {}'\
-                          .format(sample['well'], sample['sampleid'],
-                                  adapters[sample['515F']])
+                          .format(sample['well'], adapters[sample['515F_P1']],
+                                  sample['P1_sample'])                    # P1
                     print kwargs2, '\n'
                     out2 = sp.check_output(kwargs2)
                     print out2
+
+                    # Plate 2 trimming
+                    if sample['27F_P2'] != '-':
+                        cmd3 = 'skewer -t {} -b -m head -l 200 -x {} \
+                               -o {}_27F {}'.format(args.threads,
+                                                    sample['27F_P2'],
+                                                    sample['P2_sample'],
+                                                    mergedfile)           # P2
+                        kwargs3 = shlex.split(cmd3)
+                        print 'Well: {} | Primer: {} | SampleID: {}'\
+                              .format(sample['well'],
+                                      adapters[sample['27F_P2']],
+                                      sample['P2_sample'])                # P2
+                        print kwargs3, '\n'
+                        out3 = sp.check_output(kwargs3)
+                        print out3
+
+                    if sample['515F_P2'] != '-':
+                        cmd4 = 'skewer -t {} -b -m head -l 200 -x {} \
+                                -o {}_515F {}'.format(args.threads,
+                                                      sample['515F_P2'],
+                                                      sample['P2_sample'],
+                                                      mergedfile)         # P2
+                        kwargs4 = shlex.split(cmd4)
+                        print 'Well: {} | Primer: {} | SampleID: {}'\
+                              .format(sample['well'],
+                                      adapters[sample['515F_P2']],
+                                      sample['P2_sample'])                # P2
+                        print kwargs4, '\n'
+                        out4 = sp.check_output(kwargs4)
+                        print out4
     return
 
 if __name__ == '__main__':
