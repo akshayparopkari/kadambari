@@ -4,7 +4,7 @@
 Abstract: Iterate through all folders and perform adapter trimming on all
           reads. This script uses a sequencing mapping file to map wells to
           sampleids and trim 5'-end adapters of reads. Additionally, reads with
-          lengths <200 nt are discarded. For more infotmation on Skewer, visit
+          lengths <200 nt are discarded. For more information on Skewer, visit
           http://www.biomedcentral.com/1471-2105/15/182
 
 Date: 08/31/2015
@@ -40,13 +40,12 @@ def prog_options():
                              'adapters must be reverse complemented entries.')
     parser.add_argument('ws_map',
                         help='Path to tab-separated sample ID to adapter '
-                             'mapping file.  Please note that reverse adapters'
-                             ' must be reverse complemented wherever necessary'
-                             '. Format of the file: well->sampleid->adapters.'
-                             'A "-" must be used for empty cells')
+                             'mapping file. A "-" must be used for empty '
+                             'cells. Format of the file: '
+                             'well->sampleid->adapters')
     parser.add_argument('-t', '--threads', type=int, default=4,
                         help='Optionally, you may specify number of threads to'
-                             ' be used for trimming.')
+                             ' be used for trimming. Default is 4.')
     return parser.parse_args()
 
 
