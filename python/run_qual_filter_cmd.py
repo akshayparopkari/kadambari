@@ -40,26 +40,29 @@ def prog_options():
 def main():
     args = prog_options()
 
-    # Iterate through all directories and access their files
+# Iterate through all directories and access their files
     for root, dirs, files in os.walk(args.sample_dir):
         if root != args.sample_dir:
             os.chdir(root)
             print root[24:27]
 
+# Map primer names to their 16S regions
+            gene_region = {'519R': 'V1-V3', '806R': 'V4-V5'}
+
+# Iterate through all files and perform quality filtering
             for file in files:
                 if file.endswith('R-assigned-01.fastq'):
-                    fileout = raw_input('For {} input file, please enter '
-                                        'output file name: '.format(file))
+                    fname = file.split('_')[0] + '_' +\
+                            gene_region[file.split('_')[1][:4]]
                     cmd = 'fastq_quality_filter -v -q {} -p {} -i {} '\
                           '-o {}.fastq'.format(args.min_qual_score,
-                                               args.min_base_pct, file,
-                                               fileout)
+                                               args.min_base_pct, file, fname)
                     kwargs = shlex.split(cmd)
                     print kwargs, '\n'
                     out = sp.check_output(kwargs)
                     print out
-                    with open(fileout+'.txt', 'w') as outf:
-                        outf.write('{}\n{}'.format(fileout, out))
+                    with open(fname+'.txt', 'w') as outf:
+                        outf.write('{}\n{}'.format(fname, out))
     return
 
 if __name__ == '__main__':
