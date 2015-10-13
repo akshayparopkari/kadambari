@@ -14,12 +14,14 @@ import sys
 import argparse
 import numpy as np
 import pandas as pd
+from itertools import cycle
 import matplotlib.pyplot as plt
+from palettable import colorbrewer
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(
-        description='Plot categorized gramox data.')
+    parser = argparse.ArgumentParser(description='Plot categorized gramox '
+                                     'data.')
     parser.add_argument('gramox_fnh',
                         help='File with categorized gramox count data.')
     return parser.parse_args()
@@ -43,7 +45,11 @@ def main():
     conditions = np.unique(gdata[:, 0])
     categories = np.unique(gdata[:, 1])
     width = (1 - 0.3) / (len(conditions))
-    colors = ['#f1b6da', '#d01c8b', '#b8e186', '#4dac26']
+
+# Get colors for plot
+    bmap = colorbrewer.qualitative.Accent_8
+    brewer_colors = cycle(bmap.hex_colors)
+    colors = [brewer_colors.next() for i in range(len(conditions))]
 
 # Create plot
     fig = plt.figure(figsize={30, 15})
@@ -54,7 +60,7 @@ def main():
         pos = [j - (1 - 0.3) / 2. + i * width for j in ind]
         ax.bar(pos, vals, width=width, label=cond, color=colors[i])
         for x, y in zip(pos, vals):
-            ax.text(x+0.05, y+1, int(y), fontsize=20)
+            ax.text(x+(width*(0.4)), y+1, int(y), fontsize=12)
     ax.set_ylabel("Counts", size=24)
     ax.set_ylim(top=max(gdata[:, 2]) + 15)
     ax.set_xticks(ind)
