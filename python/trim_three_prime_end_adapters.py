@@ -71,12 +71,12 @@ def main():
     for root, dirs, files in os.walk(args.sample_dir):
         if root != args.sample_dir:
             os.chdir(root)
-            well = root[24:27]
+            well = root
             print '\n', well
 
 # Read adapter sequences from file
             with open(args.ap_map, 'rU') as apf:
-                adapters = {line.strip().split('\t')[0]: line.strip().split('\t')[1]
+                adapters = {line.strip().split('\t')[1]: line.strip().split('\t')[0]
                             for line in apf.readlines()[1:]}
 
 # Read mapping file data
@@ -86,70 +86,64 @@ def main():
 
 # Calculate skewer command for each sample
             for sample in map_data:
-                if sample['well'] == well:
-                    fname1 = sample['P1_sample']+'_27F-assigned-01.fastq'
-                    fname2 = sample['P1_sample']+'_515F-assigned-01.fastq'
-                    fname3 = sample['P2_sample']+'_27F-assigned-01.fastq'
-                    fname4 = sample['P2_sample']+'_515F-assigned-01.fastq'
+                if sample['well'] == well.split('-')[0].split('/')[5]:
+                    fname1 = sample['sampleid']+'_27F-assigned-01.fastq'
+                    fname2 = sample['sampleid']+'_515F-assigned-01.fastq'
 
                     # Plate 1 trimming
                     for file in files:
                         if file == fname1:
-                            cmd1 = 'skewer -t {} -b -m tail -l 200 -x {} \
-                                   -o {}_519R {}'.format(args.threads,
-                                                         sample['519R_P1'],
-                                                         file.split('_')[0],
-                                                         file)            # P1
-                            kwargs1 = shlex.split(cmd1)
-                            print 'Well: {} | Primer: {} | SampleID: {}'\
-                                  .format(sample['well'],
-                                          adapters[sample['519R_P1']],
-                                          file.split('_')[0])            # P1
-                            print kwargs1, '\n'
-                            out1 = sp.check_output(kwargs1)
-                            print out1
-
-                        elif file == fname2:
-                            cmd2 = 'skewer -t {} -b -m tail -l 200 -x {} \
-                                   -o {}_806R {}'.format(args.threads,
-                                                         sample['806R_P1'],
-                                                         file.split('_')[0],
-                                                         file)            # P1
-                            kwargs2 = shlex.split(cmd2)
-                            print 'Well: {} | SampleID: {} | Primer: {}'\
-                                  .format(sample['well'],
-                                          adapters[sample['806R_P1']],
-                                          file.split('_')[0])             # P1
-                            print kwargs2, '\n'
-                            out2 = sp.check_output(kwargs2)
-                            print out2
-
-                    # Plate 2 trimming
-                        elif file == fname3:
-                            if sample['519R_P2'] != '-':
+                            if sample['519R_A'] != '-':
+                                cmd1 = 'skewer -t {} -b -m tail -l 200 -x {} \
+                                       -o {}_519R {}'\
+                                       .format(args.threads, sample['519R_A'],
+                                               file.split('_')[0], file)
+                                kwargs1 = shlex.split(cmd1)
+                                print 'Well: {} | Primer: {} | SampleID: {}'\
+                                      .format(sample['well'],
+                                              adapters[sample['519R_A']],
+                                              file.split('_')[0])
+                                print kwargs1, '\n'
+                                out1 = sp.check_output(kwargs1)
+                                print out1
+                            elif sample['519R_B'] != '-':
                                 cmd3 = 'skewer -t {} -b -m tail -l 200 -x {} \
                                        -o {}_519R {}'\
-                                       .format(args.threads, sample['519R_P2'],
-                                               file.split('_')[0], file)  # P2
+                                       .format(args.threads, sample['519R_B'],
+                                               file.split('_')[0], file)
                                 kwargs3 = shlex.split(cmd3)
                                 print 'Well: {} | Primer: {} | SampleID: {}'\
                                       .format(sample['well'],
-                                              adapters[sample['519R_P2']],
-                                              file.split('_')[0])         # P2
+                                              adapters[sample['519R_B']],
+                                              file.split('_')[0])
                                 print kwargs3, '\n'
                                 out3 = sp.check_output(kwargs3)
                                 print out3
-                        elif file == fname4:
-                            if sample['806R_P2'] != '-':
+
+                        elif file == fname2:
+                            if sample['806R_C'] != '-':
+                                cmd2 = 'skewer -t {} -b -m tail -l 200 -x {} \
+                                       -o {}_806R {}'\
+                                       .format(args.threads, sample['806R_C'],
+                                               file.split('_')[0], file)
+                                kwargs2 = shlex.split(cmd2)
+                                print 'Well: {} | SampleID: {} | Primer: {}'\
+                                      .format(sample['well'],
+                                              adapters[sample['806R_C']],
+                                              file.split('_')[0])
+                                print kwargs2, '\n'
+                                out2 = sp.check_output(kwargs2)
+                                print out2
+                            elif sample['806R_D'] != '-':
                                 cmd4 = 'skewer -t {} -b -m tail -l 200 -x {} \
                                        -o {}_806R {}'\
-                                       .format(args.threads, sample['806R_P2'],
-                                               file.split('_')[0], file)  # P2
+                                       .format(args.threads, sample['806R_D'],
+                                               file.split('_')[0], file)
                                 kwargs4 = shlex.split(cmd4)
                                 print 'Well: {} | Primer: {} | SampleID: {}'\
                                       .format(sample['well'],
-                                              adapters[sample['806R_P2']],
-                                              file.split('_')[0])         # P2
+                                              adapters[sample['806R_D']],
+                                              file.split('_')[0])
                                 print kwargs4, '\n'
                                 out4 = sp.check_output(kwargs4)
                                 print out4
