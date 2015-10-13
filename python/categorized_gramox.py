@@ -60,6 +60,8 @@ def handle_program_options():
     parser.add_argument('out_gramox_fnh',
                         help='Categorized gramox data will be written to '
                              'this file.')
+    parser.add_argument('otu_dist_fnh',
+                        help='File to write out categorized species info.')
     parser.add_argument('categories', nargs='+',
                         help="Provide category names. For eg. 'A' 'B' 'C'")
     return parser.parse_args()
@@ -104,6 +106,12 @@ def main():
                     for i, data in enumerate(line[1:]):
                         if float(data) > 0:
                             cat[c][bacteria[i]] = gramox_data[bacteria[i]]
+
+    with open(args.otu_dist_fnh, 'w') as sdf:
+        sdf.write('CATEGORY\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n')
+        for k, v in cat.iteritems(): 
+            for k1, v1 in v.iteritems():
+                sdf.write('{}\t{}\t{}\t{}\n'.format(k, k1, v1[0], v1[1]))
 
 # Obtain numbers for all gramox categories.
     final_data = categorize_otus(cat)
