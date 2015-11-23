@@ -19,9 +19,9 @@ def categorize_otus(catdata):
     :type catdata: defaultdict(list)
     :param catdata: OTU data obtained from overall gramox data file.
     """
-    gramox = [' Gram_Negative_Anaerobes', ' Gram_Negative_Aerobes',
-              ' Gram_Positive_Anaerobes', ' Gram_Positive_Aerobes',
-              ' Unknown']
+    gramox = ['|Gram_Negative_Anaerobes', '|Gram_Negative_Aerobes',
+              '|Gram_Positive_Anaerobes', '|Gram_Positive_Aerobes',
+              '|Unknown']
     cat_gramox = defaultdict(list)
 
     Gram_Negative_Anaerobe = ['0', '0']
@@ -61,7 +61,9 @@ def handle_program_options():
                         help='Categorized gramox data will be written to '
                              'this file.')
     parser.add_argument('otu_dist_fnh',
-                        help='File to write out categorized species info.')
+                        help='Categorized OTU will be written into this file.')
+    parser.add_argument('sample_otu_fnh',
+                        help='Per sample OTU will be written into this file.')
     parser.add_argument('categories', nargs='+',
                         help="Provide category names. For eg. 'A' 'B' 'C'")
     return parser.parse_args()
@@ -95,21 +97,34 @@ def main():
     for c in categories:
         cat[c] = {}
 
-# Get the bacteria based on categories.
+# Get the bacteria based on categories and sampleid.
+    sample_otu = defaultdict(list)
     with open(args.rel_abd_fnh, 'rU') as bacat:
         bacteria = [entry
                     for entry in bacat.readline().strip().split('\t')[2:]]
         for line in bacat:
-            line = line.strip().split('\t')[1:]
+            line = line.strip().split('\t')
+            for i, abd in enumerate(line[2:]):
+                if float(abd) > 0:
+                    sample_otu[line[0]].append(bacteria[i])
             for c in categories:
-                if line[0] == c:
-                    for i, data in enumerate(line[1:]):
+                if line[1] == c:
+                    for i, data in enumerate(line[2:]):
                         if float(data) > 0:
                             cat[c][bacteria[i]] = gramox_data[bacteria[i]]
 
+# Write out OTU per sampleid
+    with open(args.sample_otu_fnh, 'w') as sdf:
+        sdf.write('SAMPLEID\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n')
+        for k, v in sample_otu.iteritems():
+            for item in v:
+                sdf.write('{}\t{}\t{}\t{}\n'.format(k, item,
+                          gramox_data[item][0], gramox_data[item][1]))
+
+# Write out categorized OTU
     with open(args.otu_dist_fnh, 'w') as sdf:
         sdf.write('CATEGORY\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n')
-        for k, v in cat.iteritems(): 
+        for k, v in cat.iteritems():
             for k1, v1 in v.iteritems():
                 sdf.write('{}\t{}\t{}\t{}\n'.format(k, k1, v1[0], v1[1]))
 
@@ -117,12 +132,13 @@ def main():
     final_data = categorize_otus(cat)
     ord_keys = sorted(final_data.keys())
 
+
 # Write to output file.
     with open(args.out_gramox_fnh, 'w') as outf:
         outf.write('Category\tGramox\tCounts\n')
         for k in ord_keys:
-            category = k.split(' ')[0]
-            gramox = k.split(' ')[1]
+            category = k.split('|')[0]
+            gramox = k.split('|')[1]
             outf.write('{}\t{}\t{}\n'.format(' '.join(category.split('_')),
                                              ' '.join(gramox.split('_')),
                                              len(final_data[k])))
