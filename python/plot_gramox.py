@@ -60,7 +60,7 @@ def main():
         pos = [j - (1 - 0.3) / 2. + i * width for j in ind]
         ax.bar(pos, vals, width=width, label=cond, color=colors[i])
         for x, y in zip(pos, vals):
-            ax.text(x+(width*(0.4)), y+1, int(y), fontsize=12)
+            ax.text(x+(width/len(conditions)), y+1, int(y), fontsize=14)
     ax.set_ylabel("Counts", size=24)
     ax.set_ylim(top=max(gdata[:, 2]) + 15)
     ax.set_xticks(ind)
