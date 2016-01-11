@@ -1,4 +1,4 @@
-#! usr/bin/env python
+#!/usr/bin/env python
 
 """
 Abstract: Web Scraping for apartment listings on Craigslist.
