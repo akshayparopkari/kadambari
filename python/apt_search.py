@@ -67,7 +67,7 @@ def main():
                           .contents[0]).split("/")[1].strip()
         data_result.append({"TimeStamp": timestamp, "Address": address,
                             "Price": price, "Unit Info": housing,
-                             "Link": link})
+                            "Link": link})
         result_df = pd.DataFrame(data_result)
         result_df.to_csv(args.out_fnh, sep='\t', index=False)
 
