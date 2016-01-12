@@ -9,7 +9,10 @@ Author: Akshay Paropkari
 """
 import argparse
 import sys
-import pandas as pd
+try: 
+    import pandas as pd
+except ImportError:
+    sys.exit("Please install pandas package.")
 
 
 def handle_program_options():
