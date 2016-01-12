@@ -14,16 +14,16 @@ import pandas as pd
 
 def handle_program_options():
     parser = argparse.ArgumentParser(
-        description='Get gramox data for OTU\'s from relative abundance file.'
+        description="Get gramox data for OTU's from relative abundance file."
     )
-    parser.add_argument('master_fnh',
-                        help='Path to master gramox data file.')
-    parser.add_argument('rel_abd_fnh',
-                        help='Path to relative abundance data file.')
-    parser.add_argument('out_fnh',
-                        help='Path to output file.')
-    parser.add_argument('-l', '--taxa_lvl', default='s',
-                        help='Path to relative abundance data file.')
+    parser.add_argument("master_fnh",
+                        help="Path to master gramox data file.")
+    parser.add_argument("rel_abd_fnh",
+                        help="Path to relative abundance data file.")
+    parser.add_argument("out_fnh",
+                        help="Path to output file.")
+    parser.add_argument("-l", "--taxa_lvl", default="s", choices=["s", "g"],
+                        help="Path to relative abundance data file.")
     return parser.parse_args()
 
 
@@ -34,37 +34,37 @@ def main():
         with open(args.master_fnh):
             pass
     except IOError as ioe:
-        err_msg = '\nError opening master gramox file: {}\n'
+        err_msg = "\nError opening master gramox file: {}\n"
         sys.exit(err_msg.format(ioe))
 
     try:
         with open(args.rel_abd_fnh):
             pass
     except IOError as ioe:
-        err_msg = '\nError opening relative abundance file: {}\n'
+        err_msg = "\nError opening relative abundance file: {}\n"
         sys.exit(err_msg.format(ioe))
 
 # Read relative abundance data
-    rel_abd_data = pd.read_csv(args.rel_abd_fnh, sep='\t')
-    otus = rel_abd_data['#OTU ID']
+    rel_abd_data = pd.read_csv(args.rel_abd_fnh, sep="\t")
+    otus = rel_abd_data["#OTU ID"]
 
 # Read gramox data from master file
-    with open(args.master_fnh, 'rU') as bgof:
-        if args.taxa_lvl == 'g':
-            bgodata = {line.strip().split('\t')[0]: '\t'.join(line.strip().split('\t')[2:4])
+    with open(args.master_fnh, "rU") as bgof:
+        if args.taxa_lvl == "g":
+            bgodata = {line.strip().split("\t")[0]: "\t".join(line.strip().split("\t")[2:4])
                        for line in bgof.readlines()}
         else:
-            bgodata = {line.strip().split('\t')[1]: '\t'.join(line.strip().split('\t')[2:4])
+            bgodata = {line.strip().split("\t")[1]: "\t".join(line.strip().split("\t")[2:4])
                        for line in bgof.readlines()}
 
 # Write classified gramox data to tsv file
-    with open(args.out_fnh, 'w') as gramoxout:
-        gramoxout.write('#OTU\tGram Status\tOxygen Requirement\n')
+    with open(args.out_fnh, "w") as gramoxout:
+        gramoxout.write("#OTU\tGram Status\tOxygen Requirement\n")
         for otu in otus:
             if otu in bgodata.keys():
-                gramoxout.write('{}\t{}\n'.format(otu, bgodata[otu]))
+                gramoxout.write("{}\t{}\n".format(otu, bgodata[otu]))
             else:
-                gramoxout.write('{}\n'.format(otu))
+                gramoxout.write("{}\n".format(otu))
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
