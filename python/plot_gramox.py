@@ -10,13 +10,30 @@ Date: 09/24/2015
 
 Author: Akshay Paropkari
 """
+
 import sys
 import argparse
-import numpy as np
-import pandas as pd
 from itertools import cycle
-import matplotlib.pyplot as plt
-from palettable import colorbrewer
+importerror = []
+try: import numpy as np
+except ImportError:
+    importerror.append("numpy")
+try:
+    import pandas as pd
+except ImportError:
+    importerror.append("pandas")
+try: 
+    import matplotlib.pyplot as plt
+except ImportError:
+    importerror.append("matplotlib")
+try: 
+    from palettable import colorbrewer
+except ImportError:
+    importerror.append("palettable")
+if len(importerror) != 0:
+    for module in importerror:
+        print "Please install {} package.".format(module)
+    sys.exit()
 
 
 def handle_program_options():
