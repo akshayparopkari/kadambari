@@ -9,7 +9,7 @@ Author: Akshay Paropkari
 """
 import argparse
 import sys
-try: 
+try:
     import pandas as pd
 except ImportError:
     sys.exit("Please install pandas package.")

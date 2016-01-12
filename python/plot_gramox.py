@@ -15,18 +15,19 @@ import sys
 import argparse
 from itertools import cycle
 importerror = []
-try: import numpy as np
+try:
+    import numpy as np
 except ImportError:
     importerror.append("numpy")
 try:
     import pandas as pd
 except ImportError:
     importerror.append("pandas")
-try: 
+try:
     import matplotlib.pyplot as plt
 except ImportError:
     importerror.append("matplotlib")
-try: 
+try:
     from palettable import colorbrewer
 except ImportError:
     importerror.append("palettable")
