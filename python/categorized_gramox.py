@@ -44,6 +44,60 @@ def categorize_otus(catdata):
     return cat_gramox
 
 
+def write_output(fnh1, fnh2, output, total_otus, classify="category"):
+    """
+    Write the output to file.
+
+    :type fnh: str
+    :param fnh: Name of the output file.
+    :type output: defaultdict(dict)
+    :param output: Dict containing output data keyed on categories or sampleIDs
+                   and their values is a dict keyed on gram stain and oxygen
+                   requirement acronym with OTU's falling in that particular
+                   group as the dict value.
+    :type total_otus: int
+    :param total_otus: Number of OTU's present in all data sample. This is used
+                      to calculate the percent of total OTU's in each category.
+    :type classify: str
+    :param classify: Specify if the output written is classified by category or
+                     by sampleIDs. The dafult option is 'category'.
+    """
+    if classify == "sampleID":
+        final_sid_data = categorize_otus(output)
+        ord_sid_keys = sorted(final_sid_data.keys())
+        with open(fnh1, "w") as outf:
+            outf.write("SampleID\tGramox\tCounts\n")
+            for k in ord_sid_keys:
+                sampleid = k.split("|")[0]
+                gramox = k.split("|")[1]
+                outf.write("{}\t{}\t{}\n".format(" ".join(sampleid.split("_")),
+                                                 " ".join(gramox.split("_")),
+                                                 (len(final_sid_data[k]) /
+                                                 float(total_otus)) * 100.))
+        with open(fnh2, "w") as out2f:
+            out2f.write("SAMPLEID\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n")
+            for k, v in output.iteritems():
+                for k1, v1 in v.iteritems():
+                    out2f.write("{}\t{}\t{}\t{}\n".format(k, k1, v1[0], v1[1]))
+    else:
+        final_cat_data = categorize_otus(output)
+        ord_cat_keys = sorted(final_cat_data.keys())
+        with open(fnh1, "w") as outf:
+            outf.write("Category\tGramox\tCounts\n")
+            for k in ord_cat_keys:
+                category = k.split("|")[0]
+                gramox = k.split("|")[1]
+                outf.write("{}\t{}\t{}\n".format(" ".join(category.split("_")),
+                                                 " ".join(gramox.split("_")),
+                                                 (len(final_cat_data[k]) /
+                                                 float(total_otus)) * 100.))
+        with open(fnh2, "w") as sdf:
+            sdf.write("CATEGORY\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n")
+            for k, v in output.iteritems():
+                for k1, v1 in v.iteritems():
+                    sdf.write("{}\t{}\t{}\t{}\n".format(k, k1, v1[0], v1[1]))
+
+
 def handle_program_options():
     parser = argparse.ArgumentParser(
         description="Get categorized gramox data for OTU\"s from annotated "
@@ -57,16 +111,18 @@ def handle_program_options():
                         help="Path to completed gramox file. All entries "
                              "must be present, unidentified entries shold be "
                              "labeled 'NA'.")
-    parser.add_argument("out_gramox_fnh",
+    parser.add_argument("cat_gramox_fnh",
                         help="Categorized gramox data will be written to "
                              "this file.")
     parser.add_argument("sid_gramox_fnh",
                         help="Sample-wise gramox data will be written to "
                              "this file.")
-    parser.add_argument("otu_dist_fnh",
-                        help="Categorized OTU will be written into this file.")
+    parser.add_argument("cat_otu_fnh",
+                        help="OTU's in each category will be written to this\
+                             file.")
     parser.add_argument("sample_otu_fnh",
-                        help="Sample-wise OTU will be written into this file.")
+                        help="OTU's in each sample will be written to this\
+                             file.")
     parser.add_argument("categories", nargs="+",
                         help="Provide category names. For eg. 'A' 'B' 'C'")
     return parser.parse_args()
@@ -116,45 +172,11 @@ def main():
                         if float(data) > 0:
                             cat[c][bacteria[i]] = gramox_data[bacteria[i]]
 
-# Obtain numbers for all gramox categories.
-    final_cat_data = categorize_otus(cat)
-    ord_cat_keys = sorted(final_cat_data.keys())
-    final_sid_data = categorize_otus(sample_otu)
-    ord_sid_keys = sorted(final_sid_data.keys())
-
 # Write to output file.
-    with open(args.out_gramox_fnh, "w") as outf:
-        outf.write("Category\tGramox\tCounts\n")
-        for k in ord_cat_keys:
-            category = k.split("|")[0]
-            gramox = k.split("|")[1]
-            outf.write("{}\t{}\t{}\n".format(" ".join(category.split("_")),
-                                             " ".join(gramox.split("_")),
-                                             len(final_cat_data[k])))
-
-# Write out sample-wise gramox data
-    with open(args.sid_gramox_fnh, "w") as outf:
-        outf.write("SampleID\tGramox\tCounts\n")
-        for k in ord_sid_keys:
-            sampleid = k.split("|")[0]
-            gramox = k.split("|")[1]
-            outf.write("{}\t{}\t{}\n".format(" ".join(sampleid.split("_")),
-                                             " ".join(gramox.split("_")),
-                                             len(final_sid_data[k])))
-
-# Write out OTU per sampleid
-    with open(args.sample_otu_fnh, "w") as sdf:
-        sdf.write("SAMPLEID\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n")
-        for k, v in sample_otu.iteritems():
-            for k1, v1 in v.iteritems():
-                sdf.write("{}\t{}\t{}\t{}\n".format(k, k1, v1[0], v1[1]))
-
-# Write out categorized OTU
-    with open(args.otu_dist_fnh, "w") as sdf:
-        sdf.write("CATEGORY\tOTU\tGRAM STAIN\tOXYGEN REQUIREMENT\n")
-        for k, v in cat.iteritems():
-            for k1, v1 in v.iteritems():
-                sdf.write("{}\t{}\t{}\t{}\n".format(k, k1, v1[0], v1[1]))
+    write_output(args.sid_gramox_fnh, args.sample_otu_fnh, sample_otu,
+                 len(bacteria), "sampleID")
+    write_output(args.cat_gramox_fnh, args.cat_otu_fnh, cat, len(bacteria),
+                 "category")
 
 if __name__ == "__main__":
     main()
