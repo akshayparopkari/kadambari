@@ -120,7 +120,7 @@ def handle_program_options():
     parser.add_argument("cat_otu_fnh",
                         help="OTU's in each category will be written to this\
                              file.")
-    parser.add_argument("sample_otu_fnh",
+    parser.add_argument("sid_otu_fnh",
                         help="OTU's in each sample will be written to this\
                              file.")
     parser.add_argument("categories", nargs="+",
@@ -173,7 +173,7 @@ def main():
                             cat[c][bacteria[i]] = gramox_data[bacteria[i]]
 
 # Write to output file.
-    write_output(args.sid_gramox_fnh, args.sample_otu_fnh, sample_otu,
+    write_output(args.sid_gramox_fnh, args.sid_otu_fnh, sample_otu,
                  len(bacteria), "sampleID")
     write_output(args.cat_gramox_fnh, args.cat_otu_fnh, cat, len(bacteria),
                  "category")
