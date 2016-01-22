@@ -177,8 +177,15 @@ def main():
                             cat[c][bacteria[i]] = gramox_data[bacteria[i]]
 
 # Write to output file.
+<<<<<<< HEAD
     write_output(args.sid_gramox_fnh, args.sid_otu_fnh, sid_otu, "sampleID")
     write_output(args.cat_gramox_fnh, args.cat_otu_fnh, cat)
+=======
+    write_output(args.sid_gramox_fnh, args.sid_otu_fnh, sample_otu,
+                 len(bacteria), "sampleID")
+    write_output(args.cat_gramox_fnh, args.cat_otu_fnh, cat, len(bacteria),
+                 "category")
+>>>>>>> 755db9a9156bd7540dfc95b401b765ceccd513de
 
 if __name__ == "__main__":
     main()
