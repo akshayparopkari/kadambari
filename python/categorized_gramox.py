@@ -81,7 +81,6 @@ def write_output(fnh1, fnh2, output, classify="category"):
                     out2f.write("{}\t{}\t{}\t{}\n".format(k, k1, v1[0], v1[1]))
     else:
         total_otus = {sid: len(output[sid]) for sid in output.keys()}
-
         final_cat_data = categorize_otus(output)
         ord_cat_keys = sorted(final_cat_data.keys())
         with open(fnh1, "w") as outf:
@@ -177,15 +176,8 @@ def main():
                             cat[c][bacteria[i]] = gramox_data[bacteria[i]]
 
 # Write to output file.
-<<<<<<< HEAD
     write_output(args.sid_gramox_fnh, args.sid_otu_fnh, sid_otu, "sampleID")
     write_output(args.cat_gramox_fnh, args.cat_otu_fnh, cat)
-=======
-    write_output(args.sid_gramox_fnh, args.sid_otu_fnh, sample_otu,
-                 len(bacteria), "sampleID")
-    write_output(args.cat_gramox_fnh, args.cat_otu_fnh, cat, len(bacteria),
-                 "category")
->>>>>>> 755db9a9156bd7540dfc95b401b765ceccd513de
 
 if __name__ == "__main__":
     main()
