@@ -16,6 +16,10 @@ import argparse
 from itertools import cycle
 importerror = []
 try:
+    import seaborn as sns
+except ImportError:
+    importerror.append("seaborn")
+try:
     import numpy as np
 except ImportError:
     importerror.append("numpy")
@@ -57,33 +61,31 @@ def main():
 
 # Read gramox data
     cat_gramox_data = pd.read_csv(args.gramox_fnh, sep='\t')
-    gdata = np.array(cat_gramox_data)
-
-# Data to plot
-    conditions = np.unique(gdata[:, 0])
-    categories = np.unique(gdata[:, 1])
-    width = (1 - 0.3) / (len(conditions))
+    cat_gramox_data.columns = ["category", "gramox", "counts",
+                               "total_otus", "otu_pct"]
 
 # Get colors for plot
     bmap = colorbrewer.qualitative.Accent_8
     brewer_colors = cycle(bmap.hex_colors)
-    colors = [brewer_colors.next() for i in range(len(conditions))]
+    colors = [brewer_colors.next()
+              for i in range(len(cat_gramox_data.category))]
 
 # Create plot
-    fig = plt.figure(figsize={30, 15})
-    ax = fig.add_subplot(111)
-    for i, cond in enumerate(conditions):
-        ind = range(1, len(categories) + 1)
-        vals = gdata[gdata[:, 0] == cond][:, 2].astype(np.float)
-        pos = [j - (1 - 0.3) / 2. + i * width for j in ind]
-        ax.bar(pos, vals, width=width, label=cond, color=colors[i])
-        for x, y in zip(pos, vals):
-            ax.text(x+(width/len(conditions)), y+1, int(y), fontsize=14)
-    ax.set_ylabel("Counts", size=24)
-    ax.set_ylim(top=max(gdata[:, 2]) + 15)
-    ax.set_xticks(ind)
-    ax.set_xticklabels(categories, size=22)
-    ax.legend(loc='best', fontsize=22)
+    plt.figure(figsize=(20, 15))
+    sns.set_style("ticks")
+    ax = sns.barplot(x="gramox", y="otu_pct", hue="category",
+                     data=cat_gramox_data,
+                     hue_order=["Control", "Smokers", "Pregnant",
+                                "Pregnant Smokers"],
+                     palette=colors,
+                     saturation=1)
+    ax.set_xlabel("")
+    ax.set_xticklabels(np.unique(cat_gramox_data.gramox), size=18, alpha=1)
+    ax.set_ylabel("OTU Overlap Percentage (%)", labelpad=20, size=18, alpha=1)
+    ax.set_yticklabels(range(0, int(max(cat_gramox_data.otu_pct) + 10), 5),
+                       alpha=1, size=18)
+    ax.legend(loc=0, fontsize=18, frameon=True)
+    ax.grid()
     plt.show()
 
 if __name__ == '__main__':
