@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 """
-Abstract: Get gram stain and oxygen requirement (gramox) data by category.
+Abstract: Get gram stain and oxygen requirement (gramox) data by category and 
+          sampleID.
 
 Date: 03/11/2015
 
