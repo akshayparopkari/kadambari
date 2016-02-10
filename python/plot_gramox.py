@@ -61,8 +61,7 @@ def main():
 
 # Read gramox data
     cat_gramox_data = pd.read_csv(args.gramox_fnh, sep='\t')
-    cat_gramox_data.columns = ["category", "gramox", "counts",
-                               "total_otus", "otu_pct"]
+    cat_gramox_data.columns = ["category", "gramox", "counts"]
 
 # Get colors for plot
     bmap = colorbrewer.qualitative.Accent_8
@@ -73,7 +72,7 @@ def main():
 # Create plot
     plt.figure(figsize=(20, 15))
     sns.set_style("ticks")
-    ax = sns.barplot(x="gramox", y="otu_pct", hue="category",
+    ax = sns.barplot(x="gramox", y="counts", hue="category",
                      data=cat_gramox_data,
                      hue_order=["Control", "Smokers", "Pregnant",
                                 "Pregnant Smokers"],
@@ -82,8 +81,7 @@ def main():
     ax.set_xlabel("")
     ax.set_xticklabels(np.unique(cat_gramox_data.gramox), size=18, alpha=1)
     ax.set_ylabel("OTU Overlap Percentage (%)", labelpad=20, size=18, alpha=1)
-    ax.set_yticklabels(range(0, int(max(cat_gramox_data.otu_pct) + 10), 5),
-                       alpha=1, size=18)
+    ax.set_yticklabels(range(0, int(max(cat_gramox_data.counts) + 10)), alpha=1, size=18)
     ax.legend(loc=0, fontsize=18, frameon=True)
     ax.grid()
     plt.show()
