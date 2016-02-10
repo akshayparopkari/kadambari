@@ -1,4 +1,4 @@
-#! usr/bin/env python
+#!/usr/bin/env python
 """
 Abstract: Calculate categorized gramox data and plot it.
 
@@ -57,16 +57,16 @@ def calc_rel_abd(biomf, sampleIDs=None):
     :return: A dict keyed on sampleID with its value denoting a dict keyed on
              otuID and abundance value for that [sampleID, otuID] pair.
     """
-    # norm_biomf = biomf.norm(inplace=False)
+    norm_biomf = biomf.norm(inplace=False)
     if sampleIDs is None:
-        sampleIDs = biomf.ids()
-    otuIDs = biomf.ids(axis="observation")
+        sampleIDs = norm_biomf.ids()
+    otuIDs = norm_biomf.ids(axis="observation")
     rel_abd = defaultdict(dict)
 
     for sample in sampleIDs:
         for otu in otuIDs:
-            abd = biomf.get_value_by_ids(otu, sample)
-            otu_tax = biomf.metadata(otu, "observation")["taxonomy"]
+            abd = norm_biomf.get_value_by_ids(otu, sample)
+            otu_tax = norm_biomf.metadata(otu, "observation")["taxonomy"]
             otu_name = oc.otu_name(otu_tax)
             rel_abd[sample][otu_name] = abd
     trans_rel_abd = bc.arcsine_sqrt_transform(rel_abd)
@@ -79,12 +79,17 @@ def handle_program_options():
     parser.add_argument("gramox_fnh",
                         help="File with gramox data for each OTU and 'NA' if "
                              " data is unavailable or inadequate.")
-    parser.add_argument("mapping_file",
-                        help="Mapping file.")
     parser.add_argument("biom_file",
                         help="BIOM file/OTU table.")
     parser.add_argument("gramox_out",
                         help="File to write out gramox data for each category.")
+    parser.add_argument("mapping_file",
+                        help="Mapping file.")
+    parser.add_argument("category", type=str,
+                        help="Column name for sample categories.")
+    parser.add_argument("-c", "--colors", type=str, default=None,
+                        help="Column name for category colors. Default is husl"
+                             " color palette from seaborn library.")
     parser.add_argument("-s", "--save_fig",
                         help="Gramox data plot will be saved into this file.")
     return parser.parse_args()
@@ -105,10 +110,14 @@ def main():
 
     # Read mapping file for category knowledge
     mapf = pd.read_csv(args.mapping_file, sep="\t")
+    if args.colors is not None:
+        cat_colors = defaultdict()
     cond = defaultdict()
     for rows in mapf.iterrows():
         row = rows[1]
-        cond[row["#SampleID"]] = row["Condition"]
+        cond[row["#SampleID"]] = row[args.category]
+        if args.colors is not None:
+            cat_colors[row[args.category]] = row[args.colors]
 
     # Get relative abundances from biom file
     biomf = biom.load_table(args.biom_file)
@@ -168,13 +177,20 @@ def main():
 
     # Plot data
     plot_data = pd.read_csv(args.gramox_out, sep="\t")
+    cat_order = sorted(np.unique(plot_data.condition))
+    if args.colors is not None:
+        palette_col = [cat_colors[c] for c in cat_order]
+    else:
+        palette_col = sns.set_palette("husl")
     fig = plt.figure(figsize=(20, 15))
-    sns.set_style("ticks")
     ax = sns.barplot(
         x="gramox", y="pct_abd", hue="condition", data=plot_data,
-        hue_order=sorted(np.unique(plot_data.condition)),
-        palette=sns.set_palette("husl"),
-        saturation=1)
+        hue_order=cat_order, palette=palette_col, saturation=1)
+    for p in ax.patches:
+        ax.annotate(np.round(p.get_height(), decimals=2),
+                    (p.get_x()+p.get_width()/2., p.get_height()), ha='center',
+                    va='bottom', xytext=(0, 5), textcoords='offset points',
+                    size=50*p.get_width())
     ax.set_xlabel("")
     ax.set_xticklabels(np.unique(plot_data.gramox), size=18, alpha=1)
     ax.set_ylabel("Abundance Percentage (%)", labelpad=20, size=18, alpha=1)
