@@ -24,25 +24,9 @@ def main():
     args = prog_options()
 
     for root, dirs, files in os.walk(args.sample_dir):
-        if root != args.sample_dir and 'Data' not in root:
-            os.chdir(root)
-            print 'root: ', root
-            print 'dir: ', dirs
-            print 'files: ', files
-
-#             if dirs == 'BaseCalls':
-#             for file in files:
-#                 cmd = 'mv {} ../../../{}'.format(file, file)
-#                 kwargs = shlex.split(cmd)
-#                 print 'kwargs', kwargs, '\n'
-#                 sp.call(kwargs)
-
-#             for file in files:
-#                 if not file.endswith('fastq.gz') and not file.startswith('out') and not file.startswith('flash'):
-#                     in1 = 'rm {}'.format(file)
-#                     kwargs = shlex.split(in1)
-#                     print kwargs
-#                     sp.call(kwargs)
+        print 'root: ', root
+        print 'dir: ', dirs
+        print 'files: ', files
     return
 
 
