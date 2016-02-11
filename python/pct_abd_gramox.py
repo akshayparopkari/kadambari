@@ -194,14 +194,18 @@ def main():
     ax.set_xlabel("")
     ax.set_xticklabels(np.unique(plot_data.gramox), size=18, alpha=1)
     ax.set_ylabel("Abundance Percentage (%)", labelpad=20, size=18, alpha=1)
-    ax.set_yticklabels(range(0, int(max(plot_data.pct_abd) + 10), 5),
+    ax.set_ylim(top=int(max(plot_data.pct_abd) + 5))
+    ax.set_yticklabels(range(0, int(max(plot_data.pct_abd) + 5), 10),
                        alpha=1, size=18)
-    ax.legend(loc=0, fontsize=18, frameon=True)
-    ax.grid()
+    leg = ax.legend(loc=0, fontsize=18, frameon=True)
+    leg.get_frame().set_linewidth(1)
+    leg.get_frame().set_edgecolor('k')
+    ax.grid(b=True, which='major', color='k', linestyle=':', alpha=0.5)
     if args.save_fig:
         fig.savefig(args.save_fig, dpi=300, format="svg", bbox_inches="tight",
-                    pad_inches=0.2, )
-    plt.show()
+                    pad_inches=0.5)
+    else:
+        plt.show()
 
 if __name__ == "__main__":
     main()
