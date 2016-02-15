@@ -35,6 +35,10 @@ def handle_program_options():
                         help="Mapping file with sampleIDs to retain in it. The"
                              " '#SampleID' column will be used to get the list"
                              " of all ids to retain.")
+    parser.add_argument("filter_otuids_fnh", default="filter_otuids.txt",
+                        help="OTUIDs to filter from .tre file using QIIME "
+                             "'filter_tree.py' script. Input file to be used "
+                             "with '-n' option.")
     return parser.parse_args()
 
 
@@ -73,9 +77,12 @@ def main():
                                                      inplace=False)
     print "{} otuIDs filtered out of the original biom file.\n".format(len(redundant_otuids))
 
-    # Write out filtered biom file
+    # Write out files
     with bo(args.output_biom_fnh, "w") as rth:
         otuid_filtered_biomf.to_hdf5(rth, "Filtered OTU Table.")
+    with open(args.filter_otuids_fnh, "w") as yui:
+        for otuid in redundant_otuids:
+            yui.write("{}\n".format(otuid))
 
 if __name__ == "__main__":
     main()
