@@ -1,3 +1,5 @@
+[![PyPI](https://img.shields.io/badge/License-New--BSD-blue.svg?style=plastic)](https://github.com/akshayparopkari/kadambari/blob/master/LICENSE)
+
 Welcome to the kadambari wiki!
 ==============================
 Current collection include the following - 
