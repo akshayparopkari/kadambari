@@ -16,7 +16,6 @@ Python scripts
 - grep_count_seqs.py
 - network_plot.py
 - pct_abd_gramox.py
-- plot_gramox.py (Will be deprecated in future)
 - remove_duplicate_genes.py
 - run_merge_cmd.py
 - run_qual_filter_cmd.py
