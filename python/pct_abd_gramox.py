@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 """
 Abstract: Calculate categorized gramox data and plot it.
-
 Author: Akshay Paropkari
-
 Date: 02/09/2016
 """
 
@@ -13,31 +11,31 @@ from collections import defaultdict
 importerrors = []
 try:
     import biom
-except ImportError:
-    importerrors.append("biom")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import numpy as np
-except ImportError:
-    importerrors.append("numpy")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import pandas as pd
-except ImportError:
-    importerrors.append("pandas")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import matplotlib.pyplot as plt
-except ImportError:
-    importerrors.append("matplotlib")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import seaborn as sns
-except ImportError:
-    importerrors.append("seaborn")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     from phylotoast import otu_calc as oc, biom_calc as bc
-except ImportError:
-    importerrors.append("phylotoast")
+except ImportError as ie:
+    importerrors.append(ie)
 if len(importerrors) > 0:
     for err in importerrors:
-        print "Please install missing module: {}".format(err)
+        print "Import Error: {}".format(err)
     sys.exit()
 
 
