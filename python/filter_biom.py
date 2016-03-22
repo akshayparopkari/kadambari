@@ -11,15 +11,15 @@ importerrors = []
 try:
     import biom
     from biom.util import biom_open as bo
-except ImportError:
-    importerrors.append("biom-format")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import pandas as pd
-except ImportError:
-    importerrors.append("pandas")
+except ImportError as ie:
+    importerrors.append(ie)
 if len(importerrors) > 0:
     for err in importerrors:
-        print "Please install missing module: {}".format(err)
+        print "Import Error: {}".format(err)
     sys.exit()
 
 
