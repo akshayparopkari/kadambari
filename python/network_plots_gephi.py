@@ -1,25 +1,33 @@
-#! /usr/bin/env python
-
+#!/usr/bin/env python
+"""
+Abstract: Generate network plots using NetworkX and Gephi.
+Author: Akshay Paropkari
+Date: 02/10/2016
+"""
 import sys
 import argparse
 from collections import defaultdict
 importerrors = []
 try:
     import biom
-except ImportError:
-    importerrors.append("biom")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import pandas as pd
-except ImportError:
-    importerrors.append("pandas")
+except ImportError as ie:
+    importerrors.append(ie)
 try:
     import networkx as nx
 except ImportError:
-    importerrors.append("networkx")
+    importerrors.append(ie)
 try:
     from phylotoast import biom_calc as bc, otu_calc as oc
 except ImportError:
-    importerrors.append("phylotoast")
+    importerrors.append(ie)
+if len(importerrors) > 0:
+    for err in importerrors:
+        print "Import Error: {}".format(err)
+    sys.exit()
 
 
 def get_relative_abundance(biomfile):
@@ -51,9 +59,9 @@ def handle_program_options():
                         "format for the tab-separated file should be: "
                         "Category -> Variable -> by Variable -> Correlation")
     parser.add_argument("cat_name", help="Category to be plotted.")
-    parser.add_argument("gexf_out",
+    parser.add_argument("-go", "--gexf_out",
                         help="Graph information written to this Graph Exchange"
-                        " XML Format file.")
+                        " XML Format file. This file can be input to Gephi.")
     parser.add_argument("-fp", "--fil_pct", type=float, default=0.75,
                         help="Specify the minimum value of correlation "
                         "strength to display. By default, all correlations "
@@ -127,15 +135,17 @@ def main():
                                            label_attribute="id")
 
     # Write out GEXF file for Gephi
-    nx.write_gexf(H, args.gexf_out, version="1.2draft")
+    if args.gexf_out:
+        nx.write_gexf(H, args.gexf_out, version="1.2draft")
 
     # Write out betweenness centrality measure to file
     if args.stats_out_fnh:
         with open(args.stats_out_fnh, "w")as poi:
-            poi.write("OTU Node\tBetweenness Centrality\n")
+            poi.write("OTU Node\tDegree Centrality\tBetweenness Centrality\n")
+            dc = nx.degree_centrality(G)
             bc = nx.betweenness_centrality(G, weight="weight")
             for key in sorted(bc.keys()):
-                poi.write("{}\t{}\n".format(key, bc[key]))
+                poi.write("{}\t{}\t{}\n".format(key, dc[key], bc[key]))
 
 if __name__ == "__main__":
     sys.exit(main())
