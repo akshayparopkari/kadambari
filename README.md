@@ -1,4 +1,4 @@
-[![PyPI](https://img.shields.io/badge/License-New--BSD-blue.svg?style=plastic)](https://github.com/akshayparopkari/kadambari/blob/master/LICENSE)
+[![LICENSE](https://img.shields.io/badge/License-New--BSD-blue.svg?style=plastic)](https://github.com/akshayparopkari/kadambari/blob/master/LICENSE)
 
 Welcome to the kadambari wiki!
 ==============================
@@ -11,10 +11,12 @@ Python scripts
 - combine_data.py
 - common_seqs_count.py
 - fill_empty_gramox_data.py
+- filter_biom.py
 - gramox_calc.py
 - gramox_to_itol_color.py
 - grep_count_seqs.py
-- network_plot.py
+- network_plot_python.py
+- network_plots_gephi.py
 - pct_abd_gramox.py
 - remove_duplicate_genes.py
 - run_merge_cmd.py
