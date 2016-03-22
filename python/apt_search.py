@@ -12,18 +12,18 @@ from urlparse import urljoin
 try:
     import requests
 except ImportError as ie:
-    importerrors.append("requests")
+    importerrors.append(ie)
 try:
     import pandas as pd
 except ImportError as ie:
-    importerrors.append("pandas")
+    importerrors.append(ie)
 try:
     from bs4 import BeautifulSoup
 except ImportError as ie:
-    importerrors.append("beautifulsoup4")
+    importerrors.append(ie)
 if len(importerrors) != 0:
-    for package in importerrors:
-        print "Please install %s package." % package
+    for err in importerrors:
+        print "Import Error: {}".format(err)
     sys.exit()
 
 
