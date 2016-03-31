@@ -216,12 +216,15 @@ def main():
                       pct_sid[sid]["Unknown"],))
     if args.per_sid_abd:
         with open(args.per_sid_abd, "w") as qwe:
-            for gramox in sorted(val.keys()):
-                if gramox != "Total":
-                    qwe.write("{}\t{}\t{}\t{}\t{}\n".format(sid, gramox,
-                              sid_gramox_abd[sid][gramox],
-                              sid_gramox_abd[sid]["Total"],
-                              pct_sid[sid][gramox]))
+            qwe.write("sample\tgramox\tabd\ttotal_abd\tpct_abd\n")
+            for sid, val in sid_gramox_abd.iteritems():
+                for gramox in sorted(val.keys()):
+                    if gramox != "Total":
+                        qwe.write("{}\t{}\t{}\t{}\t{}\n".format(sid,
+                                  gramox,
+                                  sid_gramox_abd[sid][gramox],
+                                  sid_gramox_abd[sid]["Total"],
+                                  pct_sid[sid][gramox]))
 
     # Plot data
     plot_data = pd.read_csv(args.cat_gramox_out, sep="\t")
