@@ -97,9 +97,12 @@ def handle_program_options():
                              "percent abundance (Y-axis value) Default is no "
                              "annotation.")
     parser.add_argument("-c", "--per_sid_abd",
-                        help="If provided, intermediate calculation values for "
-                             "per sample percent abundance will be written to "
-                             "this file.")
+                        help="If provided, intermediate calculation values for"
+                             " per sample percent abundance will be written to"
+                             " this file.")
+    parser.add_argument("-o", "--per_sid_otus",
+                        help="If provided, per sample otus will be written to"
+                             " this file.")
     parser.add_argument("-s", "--save_fig",
                         help="Gramox data plot will be saved into this file.")
     return parser.parse_args()
@@ -128,11 +131,16 @@ def main():
     # Get relative abundances from biom file
     biomf = biom.load_table(args.biom_file)
     rel_abd = calc_rel_abd(biomf, cond.keys())
+    if args.per_sid_otus:
+        with open(args.per_sid_otus, "w") as fdafb:
+            for sid, bacteria in rel_abd.iteritems():
+                naam = [name for name, c in bacteria.iteritems() if c > 0]
+                fdafb.write("{}\t{}\n".format(sid, "\t".join(naam)))
     otus = set()
     for k, v in rel_abd.iteritems():
         for o in v.keys():
             otus.add(o)
-    print "Total OTUS:", len(otus)
+    print "Total OTUs:", len(otus)
     for a in sorted(otus):
         if a not in gramox_data.keys():
             raise RuntimeError("OTU list from biom file doesn't match with "
