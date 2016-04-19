@@ -91,18 +91,18 @@ def main():
 # Calculate skewer command for each sample
             for sample in map_data:
                 if sample['well'] == well.split('-')[0].split('/')[5]:
-
+                    print sample["well"]
                     if sample['27F_A'] != '-':
                         cmd1 = 'skewer -t {} -b -m head -l 200 -x {} \
                                -o {}_27F {}'.format(args.threads,
                                                     sample['27F_A'],
-                                                    sample['sampleid'],
+                                                    sample['P1_sample'],
                                                     mergedfile)
                         kwargs1 = shlex.split(cmd1)
                         print 'Well: {} | Primer: {} | SampleID: {}'\
                               .format(sample['well'],
                                       adapters[sample['27F_A']],
-                                      sample['sampleid'])
+                                      sample['P1_sample'])
                         print kwargs1, '\n'
                         out1 = sp.check_output(kwargs1)
                         print out1
@@ -111,13 +111,13 @@ def main():
                         cmd2 = 'skewer -t {} -b -m head -l 200 -x {} \
                                -o {}_515F {}'.format(args.threads,
                                                      sample['515F_C'],
-                                                     sample['sampleid'],
+                                                     sample['P1_sample'],
                                                      mergedfile)
                         kwargs2 = shlex.split(cmd2)
                         print 'Well: {} | SampleID: {} | Primer: {}'\
                               .format(sample['well'],
                                       adapters[sample['515F_C']],
-                                      sample['sampleid'])
+                                      sample['P1_sample'])
                         print kwargs2, '\n'
                         out2 = sp.check_output(kwargs2)
                         print out2
@@ -126,13 +126,13 @@ def main():
                         cmd3 = 'skewer -t {} -b -m head -l 200 -x {} \
                                -o {}_27F {}'.format(args.threads,
                                                     sample['27F_B'],
-                                                    sample['sampleid'],
+                                                    sample['P2_sample'],
                                                     mergedfile)
                         kwargs3 = shlex.split(cmd3)
                         print 'Well: {} | Primer: {} | SampleID: {}'\
                               .format(sample['well'],
                                       adapters[sample['27F_B']],
-                                      sample['sampleid'])
+                                      sample['P2_sample'])
                         print kwargs3, '\n'
                         out3 = sp.check_output(kwargs3)
                         print out3
@@ -141,13 +141,13 @@ def main():
                         cmd4 = 'skewer -t {} -b -m head -l 200 -x {} \
                                 -o {}_515F {}'.format(args.threads,
                                                       sample['515F_D'],
-                                                      sample['sampleid'],
+                                                      sample['P2_sample'],
                                                       mergedfile)
                         kwargs4 = shlex.split(cmd4)
                         print 'Well: {} | Primer: {} | SampleID: {}'\
                               .format(sample['well'],
                                       adapters[sample['515F_D']],
-                                      sample['sampleid'])
+                                      sample['P2_sample'])
                         print kwargs4, '\n'
                         out4 = sp.check_output(kwargs4)
                         print out4
