@@ -12,6 +12,7 @@ Python scripts
 - common_seqs_count.py
 - fill_empty_gramox_data.py
 - filter_biom.py
+- get_fastq_quality_stats.py
 - gramox_calc.py
 - gramox_to_itol_color.py
 - grep_count_seqs.py
