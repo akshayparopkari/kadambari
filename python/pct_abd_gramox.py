@@ -23,6 +23,7 @@ except ImportError as ie:
     importerrors.append(ie)
 try:
     import matplotlib.pyplot as plt
+    import matplotlib as mpl
 except ImportError as ie:
     importerrors.append(ie)
 try:
@@ -251,6 +252,7 @@ def main():
                         va='bottom', xytext=(0, 5), textcoords='offset points',
                         size=80*p.get_width())
     ax.set_xlabel("")
+    mpl.rc("font", family="Arial")  # define font for figure text
     ax.set_xticklabels(np.unique(plot_data.condition), size=18, alpha=1)
     ax.set_ylabel("Abundance Percentage (%)", labelpad=20, size=18, alpha=1)
     ax.set_ylim(top=int(max(plot_data.pct_abd) + 5))
