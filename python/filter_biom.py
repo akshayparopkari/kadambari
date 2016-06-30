@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """
 Abstract: Filter biom file on both 'sample' and 'observation' axes, given a
-          list of sampieIDs to retain.
+          list of sampleIDs to retain.
 Author: Akshay Paropkari
 Date: 02/15/2016
 """
@@ -35,10 +35,10 @@ def handle_program_options():
                         help="Mapping file with sampleIDs to retain in it. The"
                              " '#SampleID' column will be used to get the list"
                              " of all ids to retain.")
-    parser.add_argument("filter_otuids_fnh", default="filter_otuids.txt",
-                        help="OTUIDs to filter from .tre file using QIIME "
-                             "'filter_tree.py' script. Input file to be used "
-                             "with '-n' option.")
+    parser.add_argument("-fo", "--filter_otuids_fnh",
+                        help="Path to file to write out the list of OTUIDs not present "
+                             "in any SampleIDs in mapping file. This output is usually "
+                             "used to filter out unwanted otuids from .tre file.")
     return parser.parse_args()
 
 
@@ -47,19 +47,13 @@ def main():
 
     # Error check input file
     try:
-        with open(args.input_biom_fnh):
-            pass
+        biomf = biom.load_table(args.input_biom_fnh)
     except IOError as ioe:
         sys.exit("\nError in BIOM file path: {}\n".format(ioe))
     try:
-        with open(args.mapping_fnh):
-            pass
+        mapf = pd.read_csv(args.mapping_fnh, sep="\t")
     except IOError as ioe:
         sys.exit("\nError in mapping file path: {}\n".format(ioe))
-
-    # Read input files
-    biomf = biom.load_table(args.input_biom_fnh)
-    mapf = pd.read_csv(args.mapping_fnh, sep="\t")
 
     # Get filtered biom data
     keep_sampleIDs = list(mapf["#SampleID"])
@@ -85,4 +79,4 @@ def main():
             yui.write("{}\n".format(otuid))
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())
