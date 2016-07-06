@@ -19,8 +19,6 @@ Python scripts
 - grep_count_seqs.py
 - network_plot_python.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
-- network_plots_gephi.py
-  - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
 - overlap_comparisons.py
 - pct_abd_gramox.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
