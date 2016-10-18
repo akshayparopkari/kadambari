@@ -36,7 +36,7 @@ except ImportError as ie:
     importerrors.append(ie)
 if len(importerrors) > 0:
     for err in importerrors:
-        print "Import Error: {}".format(err)
+        print("Import Error: {}".format(err))
     sys.exit()
 
 
@@ -115,7 +115,7 @@ def main():
     # Read gramox_calc data
     gramox_data = defaultdict()
     with open(args.gramox_fnh, "rU") as rht:
-        for line in rht.readlines():
+        for line in rht.readlines()[1:]:
             line = line.strip().split("\t")
             try:
                 gramox_data[line[0]] = [line[1], line[2]]
@@ -131,7 +131,7 @@ def main():
 
     # Get relative abundances from biom file
     biomf = biom.load_table(args.biom_file)
-    rel_abd = calc_rel_abd(biomf, cond.keys())
+    rel_abd = calc_rel_abd(biomf)
     if args.per_sid_otus:
         with open(args.per_sid_otus, "w") as fdafb:
             for sid, bacteria in rel_abd.iteritems():
@@ -141,12 +141,11 @@ def main():
     for k, v in rel_abd.iteritems():
         for o in v.keys():
             otus.add(o)
-    print "Total OTUs:", len(otus)
+    print("Total OTUs: {}".format(len(otus)))
     for a in sorted(otus):
         if a not in gramox_data.keys():
             raise RuntimeError("OTU list from biom file doesn't match with "
                                "gramox data file list.")
-
     # Initialize dict to collect gramox abundance data by category and sample
     cat = defaultdict(dict)
     sid_gramox_abd = defaultdict(dict)
