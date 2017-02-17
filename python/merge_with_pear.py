@@ -30,6 +30,9 @@ def prog_options():
                              "PEAR documentation. Default value is 4G (4GB).")
     parser.add_argument("-j", "--threads", default=4, type=int,
                         help="Number of threads available for usage. Default is 4.")
+    parser.add_argument("-dr", "--dry_run", action="store_true",
+                        help="Provide a dry run of the commands which will be executed "
+                             "without actually executing the commands.")
     return parser.parse_args()
 
 
@@ -58,11 +61,13 @@ def main():
                           format(R1, R2, output_prefix, args.min_length, args.memory,
                                  args.threads)
                     kwargs = shlex.split(in1)
+                if not args.dry_run:
+                    out = sp.check_output(kwargs)
+                    print("{}".format(out))
+                    with open("{}_pear_merge_log.txt".format(output_prefix), "w") as outl:
+                        outl.write("{}".format(out))
+                else:
                     print("{}\n".format(" ".join(kwargs)))
-                out = sp.check_output(kwargs)
-                print("{}".format(out))
-                with open("{}_pear_merge_log.txt".format(output_prefix), "w") as outlog:
-                    outlog.write("{}".format(out))
     return
 
 
