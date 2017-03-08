@@ -6,22 +6,25 @@ Current collection include the following -
 
 Python scripts
 --------------
+- TSNE.py
 - apt_search.py
 - categorized_gramox.py
 - combine_data.py
 - common_seqs_count.py
+- correlation.py
+- dissimilarity_overlap_curve.py
 - fill_empty_gramox_data.py
-- filter_biom.py
-  - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
 - get_fastq_quality_stats.py
 - gramox_calc.py
 - gramox_to_itol_color.py
 - grep_count_seqs.py
+- merge_with_pear.py
 - network_plot_python.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
 - overlap_comparisons.py
 - pct_abd_gramox.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
+- plot_MA.py
 - remove_duplicate_genes.py
 - run_merge_cmd.py
 - run_qual_filter_cmd.py
