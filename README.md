@@ -21,6 +21,7 @@ Python scripts
 - merge_with_pear.py
 - network_plot_python.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
+- otu_metadata_db.py
 - overlap_comparisons.py
 - pct_abd_gramox.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
