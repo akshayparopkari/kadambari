@@ -86,6 +86,9 @@ def prog_options():
     parser.add_argument("-d", "--action", choices=["D", "T"], default="D",
                         help="Demultiplex (D) or Trim (T) sequences based on adapters. "
                              "Default action is demultiplexing sequencing.")
+    parser.add_argument("-dr", "--dry_run", action="store_true",
+                        help="Provide a dry run of the commands which will be executed "
+                             "without actually executing the commands.")
     return parser.parse_args()
 
 
@@ -132,7 +135,7 @@ def main():
 
     # Calculate skewer command for each sample
             for sample in map_data:
-                if sample["well"] == well.split("-")[0].split("/")[-1]:
+                if sample["well"] == well.split("/")[-1].split("-")[0]:
                     # Plate 1 - V1-V3
                     try:
                         if args.action == "T":
@@ -153,8 +156,9 @@ def main():
                               adapters[sample["27F_P1"]],
                               sample["P1_sample"]))
                         print("{}\n".format(" ".join(command)))
-#                         out = sp.check_output(command)
-#                         print("{}".format(out))
+                        if not args.dry_run:
+                            out = sp.check_output(command)
+                            print("{}".format(out))
 
                     # Plate 1 - V4-V5
                     try:
@@ -176,8 +180,9 @@ def main():
                               adapters[sample["515F_P1"]],
                               sample["P1_sample"]))
                         print("{}\n".format(" ".join(command)))
-#                         out = sp.check_output(command)
-#                         print("{}".format(out))
+                        if not args.dry_run:
+                            out = sp.check_output(command)
+                            print("{}".format(out))
 
                     # Plate 2 - V1-V3
                     try:
@@ -199,8 +204,9 @@ def main():
                               adapters[sample["27F_P2"]],
                               sample["P2_sample"]))
                         print("{}\n".format(" ".join(command)))
-#                         out = sp.check_output(command)
-#                         print("{}".format(out))
+                        if not args.dry_run:
+                            out = sp.check_output(command)
+                            print("{}".format(out))
 
                     # Plate 2 - V4-V5
                     try:
@@ -222,8 +228,9 @@ def main():
                               adapters[sample["515F_P2"]],
                               sample["P2_sample"]))
                         print("{}\n".format(" ".join(command)))
-#                         out = sp.check_output(command)
-#                         print("{}".format(out))
+                        if not args.dry_run:
+                            out = sp.check_output(command)
+                            print("{}".format(out))
     return
 
 

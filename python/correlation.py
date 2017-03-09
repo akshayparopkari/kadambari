@@ -131,7 +131,7 @@ def main():
         sid_cat = gather_categories(mdata, mheader, [args.category_column])
 
     # Create arguments for helper function to be supplied to multiprocessing pool.map()
-    chunksize = 1000
+    chunksize = 10000
     jobs = [(otu_combos[x:x+chunksize], sid_cat, ast_rel_abd,)
             for x in xrange(0, len(otu_combos), chunksize)]
     print("{0} jobs created.".format(len(jobs)))
