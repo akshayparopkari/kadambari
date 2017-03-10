@@ -9,7 +9,7 @@ import sys
 import argparse
 from traceback import format_exc
 from time import localtime, strftime
-from itertools import combinations, izip
+from itertools import combinations
 from phylotoast.util import parse_map_file, gather_categories
 from phylotoast.biom_calc import arcsine_sqrt_transform as ast, relative_abundance
 importerrors = set()
@@ -165,8 +165,8 @@ def main():
     k_kos = {(e[2], e[3],) for e in fdr_corr_k_tau}
     s_kos = {(f[2], f[3],) for f in fdr_corr_s_rho}
     final_kos = s_kos & k_kos
-    print("{0} elements in k_kos\n{1} elements in s_kos\n{2} elements are common to both."
-          .format(len(k_kos), len(s_kos), len(final_kos)))
+    print("{0} elements from KendallTau\n{1} elements from SpearmanRho\n{2} elements are "
+          "common to both.".format(len(k_kos), len(s_kos), len(final_kos)))
     final_fdr_corr_results = [cdata[1:] for cdata in fdr_corr_s_rho
                               if (cdata[2], cdata[3],) in final_kos]
 
