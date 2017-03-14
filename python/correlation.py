@@ -41,8 +41,6 @@ if len(importerrors) > 0:
 
 def calc_corr(otu_combos, gather_categories, abd_data):
     """This function calculates the pairwise spearman correlation for each group."""
-    starttime = strftime("%x | %X".format(localtime))
-    print("{0} | Core-{1}".format(starttime, current_process().name.split("-")[1]))
     result = []
     for combo in otu_combos:
         list1 = []
@@ -129,6 +127,13 @@ def main():
     else:
         # Gather sampleID categories
         sid_cat = gather_categories(mdata, mheader, [args.category_column])
+
+    try:
+        with open(args.metadata_file, "rU") as mdf:
+            obs_md = {line.strip().split("\t")[0]: line.strip().split("\t")[1:]
+                      for line in mdf.readlines()[1:]}
+    except Exception:
+        pass
 
     # Create arguments for helper function to be supplied to multiprocessing pool.map()
     chunksize = 10000
