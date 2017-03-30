@@ -25,7 +25,7 @@ if len(importerrors) != 0:
 
 def get_listings(outfile, house_soup, base_url):
     """
-    Get results for house/room listing. Parse through webpage and get timestamp, title,
+    Get results for Cragislist listing. Parse through webpage and get timestamp, title,
     price, address and area info.
     """
     with open(outfile, "w") as outf:
