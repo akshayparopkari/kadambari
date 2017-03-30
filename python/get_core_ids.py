@@ -26,9 +26,9 @@ if len(importerrors) > 0:
 def prog_options():
     parser = argparse.ArgumentParser(description="Compute core IDs from a BIOM file.")
     parser.add_argument("in_biomf", help="Input BIOM format file.")
-    parser.add_argument("out_fnh", help="Path and name of output directory, if single "
-                        "category otherwise path to a directory. Multiple category data "
-                        "output files will be saved under their category name.")
+    parser.add_argument("out_fnh", help="Path and name of output directory. Multiple "
+                        "category data output files will be saved under their category "
+                        "name.")
     parser.add_argument("map_fnh", help="Mapping file associated with input BIOM file.")
     parser.add_argument("-g", "--group_by",
                         help="Any mapping categories, such as treatment type, that will "
