@@ -7,11 +7,11 @@ Current collection include the following -
 Python scripts
 --------------
 - TSNE.py
-- apt_search.py
 - categorized_gramox.py
 - combine_data.py
 - common_seqs_count.py
 - correlation.py
+- craigslist_search.py
 - dissimilarity_overlap_curve.py
 - fill_empty_gramox_data.py
 - get_fastq_quality_stats.py
