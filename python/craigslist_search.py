@@ -99,7 +99,7 @@ def main():
     BASE_URL = "https://{0}.craigslist.org/".format(args.city_name.lower())
     if args.car_search:
         URL = urljoin(BASE_URL, "search/cta?search_distance={0}&postal={1}&max_price={2}&"
-                      "&min_auto_year={3}".
+                      "min_price=3000&min_auto_year={3}".
                       format(args.distance, args.zip_code, args.max_price, args.min_year))
     else:
         if args.housing_type == "apartment":
