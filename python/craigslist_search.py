@@ -51,7 +51,7 @@ def get_listings(outfile, house_soup, base_url):
             try:
                 title = str(listing.find("a", {"class": "result-title hdrlnk"})).\
                         split(">")[1].split("<")[0]
-                title = title.strip()
+                title = title.strip().translate(None, "*~!")
             except Exception:
                 title = "NA"
             link = urljoin(base_url, listing.a["href"])
@@ -99,16 +99,16 @@ def main():
     BASE_URL = "https://{0}.craigslist.org/".format(args.city_name.lower())
     if args.car_search:
         URL = urljoin(BASE_URL, "search/cta?search_distance={0}&postal={1}&max_price={2}&"
-                      "min_price=3000&min_auto_year={3}".
+                      "min_price=3000&min_auto_year={3}&auto_title_status=1".
                       format(args.distance, args.zip_code, args.max_price, args.min_year))
     else:
         if args.housing_type == "apartment":
             URL = urljoin(BASE_URL, "search/apa?search_distance={0}&postal={1}&"
-                          "max_price={2}&availabilityMode=0&private_room=1".
+                          "min_price=350&max_price={2}&availabilityMode=0&private_room=1".
                           format(args.distance, args.zip_code, args.max_price))
         else:
             URL = urljoin(BASE_URL, "search/roo?search_distance={0}&postal={1}&"
-                          "max_price={2}&availabilityMode=0&private_room=1".
+                          "min_price=350&max_price={2}&availabilityMode=0&private_room=1".
                           format(args.distance, args.zip_code, args.max_price))
 
     # Download and read HTML page content
