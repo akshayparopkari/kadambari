@@ -23,40 +23,40 @@ if len(importerrors) != 0:
     sys.exit()
 
 
-def get_listings(outfile, house_soup, base_url):
+def get_search_results(house_soup, base_url):
     """
     Get results for Cragislist listing. Parse through webpage and get timestamp, title,
     price, address and area info.
     """
-    with open(outfile, "w") as outf:
-        outf.write("TimeStamp\tTitle\tAddress\tPrice\tArea\tLink\n")
-        for listing in house_soup.find_all("li", {"class": "result-row"}):
-            timestamp = str(listing.find("time", {"class": "result-date"})).\
-                        split(" ")[2].split('"')[1]
-            try:
-                price = str(listing.find("span", {"class": "result-price"})).\
-                        split(">")[1].split("<")[0]
-            except Exception:
-                price = "NA"
-            try:
-                address = str(listing.find("span", {"class": "result-hood"})).\
-                          split("(")[1].split(")")[0]
-            except Exception:
-                address = "NA"
-            try:
-                area = str(listing.find("span", {"class": "housing"})).split()[2].\
-                       split("<")[0]
-            except Exception:
-                area = "NA"
-            try:
-                title = str(listing.find("a", {"class": "result-title hdrlnk"})).\
-                        split(">")[1].split("<")[0]
-                title = title.strip().translate(None, "*~!")
-            except Exception:
-                title = "NA"
-            link = urljoin(base_url, listing.a["href"])
-            outf.write("{0}\t{1}\t{2}\t{3}\t{4}\t{5}\n".
-                       format(timestamp, title, address, price, area, link))
+
+    search_results = set()
+    for listing in house_soup.find_all("li", {"class": "result-row"}):
+        timestamp = str(listing.find("time", {"class": "result-date"})).\
+                    split(" ")[2].split('"')[1]
+        try:
+            price = str(listing.find("span", {"class": "result-price"})).\
+                    split(">")[1].split("<")[0]
+        except Exception:
+            price = "NA"
+        try:
+            address = str(listing.find("span", {"class": "result-hood"})).\
+                      split("(")[1].split(")")[0]
+        except Exception:
+            address = "NA"
+        try:
+            area = str(listing.find("span", {"class": "housing"})).split()[2].\
+                   split("<")[0]
+        except Exception:
+            area = "NA"
+        try:
+            title = str(listing.find("a", {"class": "result-title hdrlnk"})).\
+                    split(">")[1].split("<")[0]
+            title = title.strip().translate(None, "*~!")
+        except Exception:
+            title = "NA"
+        link = urljoin(base_url, listing.a["href"])
+        search_results.add((timestamp, price, address, area, title, link))
+    return search_results
 
 
 def handle_program_options():
@@ -120,8 +120,32 @@ def main():
         sys.exit(ex)
     else:
         soup = BeautifulSoup(response.content, "lxml")
-        get_listings(args.out_fnh, soup, BASE_URL)
+        search_res = get_search_results(soup, BASE_URL)
 
+    # Get metadata for car results
+    if args.car_search:
+        for res in search_res:
+            try:
+                c_response = requests.get(res[-1])
+                c_response.raise_for_status()
+            except Exception as ex:
+                print "ERROR!"
+                sys.exit(ex)
+            else:
+                c_soup = BeautifulSoup(c_response.content, "lxml")
+            for mdata in c_soup.find_all("p", {"class": "attrgroup"}):
+                try:
+                    vin = str(mdata.find("span", "VIN: "))
+                except Exception:
+                    vin = "NA"
+                print res[-1], "\t", vin
+    return
+
+    # Write out results
+    with open(args.out_fnh, "w") as outf:
+        outf.write("Date\tPrice\tAddress\tArea\tTitle\tLink\n")
+        for res in search_res:
+            outf.write("{0}\n".format("\t".join(list(res))))
 
 if __name__ == "__main__":
     sys.exit(main())
