@@ -23,6 +23,24 @@ if len(importerrors) != 0:
     sys.exit()
 
 
+def get_vin_info(url):
+    """GET VIN number for car search by parsing through result webpage."""
+    try:
+        c_response = requests.get(url)
+        c_response.raise_for_status()
+    except Exception as ex:
+        print "ERROR!"
+        sys.exit(ex)
+    else:
+        c_soup = BeautifulSoup(c_response.content, "lxml")
+    for mdata in c_soup.find_all("p", {"class": "attrgroup"})[1:]:
+        for minfo in [tag.text for tag in mdata.find_all("span")]:
+            if "VIN:" in minfo:
+                vin = minfo.split(": ")[1]
+            else:
+                vin = "NA"
+    return vin
+
 def get_search_results(house_soup, base_url):
     """
     Get results for Cragislist listing. Parse through webpage and get timestamp, title,
@@ -55,7 +73,8 @@ def get_search_results(house_soup, base_url):
         except Exception:
             title = "NA"
         link = urljoin(base_url, listing.a["href"])
-        search_results.add((timestamp, price, address, area, title, link))
+        vin = get_vin_info(link)
+        search_results.add((timestamp, price, address, area, title, link, vin))
     return search_results
 
 
@@ -98,9 +117,11 @@ def main():
     # Obtain relevant URL
     BASE_URL = "https://{0}.craigslist.org/".format(args.city_name.lower())
     if args.car_search:
-        URL = urljoin(BASE_URL, "search/cta?search_distance={0}&postal={1}&max_price={2}&"
-                      "min_price=3000&min_auto_year={3}&auto_title_status=1".
-                      format(args.distance, args.zip_code, args.max_price, args.min_year))
+        URL = urljoin(BASE_URL, "search/cta?sort=pricedsc&auto_title_status=1&max_auto_mi"
+                      "les=90000&max_price={2}&min_auto_miles=1000&min_auto_year={3}&"
+                      "min_price=3000&postal={1}&search_distance={0}"
+                      .format(args.distance, args.zip_code,
+                              args.max_price, args.min_year))
     else:
         if args.housing_type == "apartment":
             URL = urljoin(BASE_URL, "search/apa?search_distance={0}&postal={1}&"
@@ -122,28 +143,9 @@ def main():
         soup = BeautifulSoup(response.content, "lxml")
         search_res = get_search_results(soup, BASE_URL)
 
-    # Get metadata for car results
-    if args.car_search:
-        for res in search_res:
-            try:
-                c_response = requests.get(res[-1])
-                c_response.raise_for_status()
-            except Exception as ex:
-                print "ERROR!"
-                sys.exit(ex)
-            else:
-                c_soup = BeautifulSoup(c_response.content, "lxml")
-            for mdata in c_soup.find_all("p", {"class": "attrgroup"}):
-                try:
-                    vin = str(mdata.find("span", "VIN: "))
-                except Exception:
-                    vin = "NA"
-                print res[-1], "\t", vin
-    return
-
     # Write out results
     with open(args.out_fnh, "w") as outf:
-        outf.write("Date\tPrice\tAddress\tArea\tTitle\tLink\n")
+        outf.write("Date\tPrice\tAddress\tArea\tTitle\tLink\tVIN\n")
         for res in search_res:
             outf.write("{0}\n".format("\t".join(list(res))))
 
