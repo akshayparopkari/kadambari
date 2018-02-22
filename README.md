@@ -2,6 +2,7 @@
 
 Welcome to the kadambari!
 ==============================
+
 Current collection include the following - 
 
 Python scripts
@@ -11,25 +12,25 @@ Python scripts
 - combine_data.py
 - common_seqs_count.py
 - correlation.py
+- count_singletons.py      (_1000 Genomes Project_)
+- count_variant_sites.py   (_1000 Genomes Project_)
 - craigslist_search.py
 - dissimilarity_overlap_curve.py
 - fill_empty_gramox_data.py
+- get_core_ids.py
 - get_fastq_quality_stats.py
 - gramox_calc.py
 - gramox_to_itol_color.py
 - grep_count_seqs.py
 - merge_with_pear.py
-- network_plot_python.py
-  - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
 - otu_metadata_db.py
 - overlap_comparisons.py
 - pct_abd_gramox.py
-  - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo. All future updates will be posted in the new repo.
+  - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo.
 - plot_MA.py
 - remove_duplicate_genes.py
 - run_merge_cmd.py
 - run_qual_filter_cmd.py
-- run.py
 - trim_five_prime_end_adapters.py
 - trim_three_prime_end_adapters.py
 
