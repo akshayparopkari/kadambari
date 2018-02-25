@@ -44,7 +44,7 @@ def handle_program_options():
                         help="Metadata mapping file corresponsding to Chr21 VCF")
     parser.add_argument("-mf", "--main_file", help="File of singleton counts.")
     parser.add_argument("-s", "--savefile",
-                        help="Save the plot to this file. PDF preferred.")
+                        help="Save the plot as sn SVG file.")
     parser.add_argument("-o", "--output_file",
                         help="Save consolidated data to this file")
     return parser.parse_args()
@@ -82,6 +82,7 @@ def main():
                                 assert line[3] in ["A", "T", "C", "G"]
                                 assert line[4] in ["A", "T", "C", "G"]
                                 assert line[9:].count(singleton) == 1
+                                assert line[9:].count("0|0") == len(line[9:]) - 1
                             except AssertionError:
                                 continue
                             else:
@@ -109,7 +110,7 @@ def main():
                      " parameter.")
         else:
             colors = Blues_9.hex_colors[4:] + Greens_9.hex_colors[4:] +\
-                     Purples_9.hex_colors[4:] + Reds_9.hex_colors[5:] +\
+                     Purples_9.hex_colors[4:] + Reds_9.hex_colors[2:6] +\
                      YlOrBr_9.hex_colors[2:]
             x_order = tuple(["FIN", "GBR", "CEU", "IBS", "TSI", "CHS", "CDX", "CHB",
                              "JPT", "KHV", "GIH", "STU", "PJL", "ITU", "BEB", "PEL",
@@ -127,7 +128,6 @@ def main():
             plt.ylabel("Number of Singletons in Chr21", fontdict={"fontsize": 12})
             plt.savefig(args.savefile, dpi=300, format="svg",
                        bbox_inches="tight", pad_inches=0.25)
-
 
 if __name__ == "__main__":
     sys.exit(main())
