@@ -18,19 +18,23 @@ try:
 except ImportError:
     err.append("matplotlib")
 try:
-    import seaborn as sns
+    from palettable.colorbrewer.sequential import Blues_9    # Europe
+    from palettable.colorbrewer.sequential import Greens_9   # East Asia
+    from palettable.colorbrewer.sequential import Purples_9  # South Asia
+    from palettable.colorbrewer.sequential import Reds_9     # Americas
+    from palettable.colorbrewer.sequential import YlOrBr_9   # Sub-Saharan Africa
 except ImportError:
-    err.append("seaborn")
+    err.append("palettable")
 try:
     import pandas as pd
 except ImportError:
     err.append("pandas")
-
 try:
     assert len(err) == 0
 except AssertionError:
     for error in err:
         sys.exit("Please install {}".format(error))
+
 
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Calculate number of singletons per "
@@ -75,6 +79,8 @@ def main():
                         line = line.strip().split()
                         for singleton in singletons:
                             try:
+                                assert line[3] in ["A", "T", "C", "G"]
+                                assert line[4] in ["A", "T", "C", "G"]
                                 assert line[9:].count(singleton) == 1
                             except AssertionError:
                                 continue
@@ -102,15 +108,26 @@ def main():
             sys.exit("Error reading in singleton count file. Please check the --main_file"
                      " parameter.")
         else:
-            singleton_counts = singleton_counts.sort_values(by=["population", "singleton_count"])
-            x_order = singleton_counts.groupby(["population"]).mean().sort_values(by="singleton_count")
-        ax = plt.figure(figsize=(24, 8))
-        ax = sns.swarmplot(x="population", y="singleton_count", data=singleton_counts,
-                           order=x_order.index)
-        ax.set_xlabel("Populations", fontdict={"fontsize": 12})
-        ax.set_ylabel("Number of Singletons in Chr21", fontdict={"fontsize": 12})
-        plt.savefig(args.savefile, dpi=300, format="svg",
-                    bbox_inches="tight", pad_inches=0.25)
+            colors = Blues_9.hex_colors[4:] + Greens_9.hex_colors[4:] +\
+                     Purples_9.hex_colors[4:] + Reds_9.hex_colors[5:] +\
+                     YlOrBr_9.hex_colors[2:]
+            x_order = tuple(["FIN", "GBR", "CEU", "IBS", "TSI", "CHS", "CDX", "CHB",
+                             "JPT", "KHV", "GIH", "STU", "PJL", "ITU", "BEB", "PEL",
+                             "MXL", "CLM", "PUR", "ASW", "ACB", "GWD", "YRI", "LWK",
+                             "ESN", "MSL"])
+            assigned_colors = {a:b for a, b in zip(x_order, colors)}
+            sorted_counts = singleton_counts.groupby("population").median().\
+                            reindex(x_order, axis=0)
+            plt.figure(figsize=(20, 8))
+            for entry in sorted_counts.itertuples():
+                plt.scatter(entry[0], entry[1], marker="_", s=300, c="k")
+            for entry in singleton_counts.itertuples():
+                plt.scatter(entry[1], entry[2], marker="+", c=assigned_colors[entry[1]])
+            plt.xlabel("Populations", fontdict={"fontsize": 12})
+            plt.ylabel("Number of Singletons in Chr21", fontdict={"fontsize": 12})
+            plt.savefig(args.savefile, dpi=300, format="svg",
+                       bbox_inches="tight", pad_inches=0.25)
+
 
 if __name__ == "__main__":
     sys.exit(main())
