@@ -22,6 +22,7 @@ Python scripts
 - gramox_calc.py
 - gramox_to_itol_color.py
 - grep_count_seqs.py
+- haploid_local_ancestry_inference.py (_1000 Genomes Project_)
 - merge_with_pear.py
 - otu_metadata_db.py
 - overlap_comparisons.py
