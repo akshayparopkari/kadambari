@@ -7,6 +7,7 @@ Current collection include the following -
 
 Python scripts
 --------------
+- 1000gpca.py     (_1000 Genomes Project_)
 - TSNE.py
 - categorized_gramox.py
 - combine_data.py
