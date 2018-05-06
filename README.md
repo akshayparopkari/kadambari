@@ -13,6 +13,7 @@ Python scripts
 - combine_data.py
 - common_seqs_count.py
 - correlation.py
+- count_ChrX_variants.py (_1000 Genomes Project_)
 - count_singletons.py      (_1000 Genomes Project_)
 - count_variant_sites.py   (_1000 Genomes Project_)
 - craigslist_search.py
