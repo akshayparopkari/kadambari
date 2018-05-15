@@ -15,7 +15,8 @@ Python scripts
 - correlation.py
 - count_ChrX_variants.py (_1000 Genomes Project_)
 - count_singletons.py      (_1000 Genomes Project_)
-- count_variant_sites.py   (_1000 Genomes Project_)
+- count_variants.py (_1000 Genomes Project_)
+- count_variant_sites.py   (_1000 Genomes Project_)
 - craigslist_search.py
 - dissimilarity_overlap_curve.py
 - fill_empty_gramox_data.py
@@ -31,6 +32,7 @@ Python scripts
 - pct_abd_gramox.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo.
 - plot_MA.py
+- plot_heterozygosity.py (_1000 Genomes Project_)
 - remove_duplicate_genes.py
 - run_merge_cmd.py
 - run_qual_filter_cmd.py
