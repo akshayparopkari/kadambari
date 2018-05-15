@@ -32,6 +32,7 @@ Python scripts
 - pct_abd_gramox.py
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo.
 - plot_MA.py
+- plot_ancestry.py
 - plot_heterozygosity.py (_1000 Genomes Project_)
 - remove_duplicate_genes.py
 - run_merge_cmd.py
