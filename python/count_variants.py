@@ -9,32 +9,11 @@ import sys
 import gzip
 import argparse
 from time import strftime
-err = []
-try:
-    import matplotlib as mpl
-    import matplotlib.pyplot as plt
-    mpl.rc("font", family="Arial")
-    mpl.rc("xtick", labelsize=11)  # set X axis ticksize
-    mpl.rc("ytick", labelsize=11)  # set Y axis ticksize
-except ImportError:
-    err.append("matplotlib")
-try:
-    from palettable.colorbrewer.sequential import Blues_9    # Europe
-    from palettable.colorbrewer.sequential import Greens_9   # East Asia
-    from palettable.colorbrewer.sequential import Purples_9  # South Asia
-    from palettable.colorbrewer.sequential import Reds_9     # Americas
-    from palettable.colorbrewer.sequential import YlOrBr_9   # Sub-Saharan Africa
-except ImportError:
-    err.append("palettable")
+from re import findall
 try:
     import pandas as pd
 except ImportError:
-    err.append("pandas")
-try:
-    assert len(err) == 0
-except AssertionError:
-    for error in err:
-        sys.exit("Please install {}".format(error))
+    sys.exit("Please install pandas")
 
 
 def get_variant_counts(line, males, linenum):
@@ -45,23 +24,35 @@ def get_variant_counts(line, males, linenum):
         if males:
             try:
                 assert 60001 <= int(line[1]) <= 2699520
-            except AssertionError:
+            except AssertionError:  # fail assertion
                 try:
                     154931044 <= int(line[1]) <= 155260560
-                except AssertionError:
-                    pass
+                except AssertionError:  # fail assertion
+                    try:
+                        assert line[3] in ["A", "T", "C", "G"]
+                        assert line[4] in ["A", "T", "C", "G"]
+                    except AssertionError:
+                        print("{}: Skipped line because coordinate in ignored region".
+                              format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                        return None
+                    else:
+                        variant_indices = [i for i, entry in enumerate(line[9:])
+                                           if int(entry) == 1]
+                        print("{}: Completed line {}".
+                              format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                        return variant_indices
                 else:
-                    print("{}: Skipped line because coordinate in ignored region".
-                          format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                    print("{}: Skipped line because {} in ignored region".
+                          format(strftime("%d %b %Y %H:%M:%S"), line[1], linenum))
                     return None
             else:
                 print("{}: Skipped line because coordinate in ignored region".
-                          format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                      format(strftime("%d %b %Y %H:%M:%S"), linenum))
                 return None
         assert line[3] in ["A", "T", "C", "G"]
         assert line[4] in ["A", "T", "C", "G"]
     except AssertionError:
-        print("{}: Skipped line since position isn't biallelic {}".
+        print("{}: Skipped line since position isn't biallelic entry {}".
               format(strftime("%d %b %Y %H:%M:%S"), linenum))
         return None
     else:
@@ -71,15 +62,94 @@ def get_variant_counts(line, males, linenum):
         return variant_indices
 
 
+def get_diploid_htz_counts(line, linenum):
+    """Iterate through dataframe of genotype entries and count 0|1 or 1|0."""
+    line = line.strip().split("\t")
+    print("{}: Processing position {} in line {}".
+          format(strftime("%d %b %Y %H:%M:%S"), line[1], linenum))
+    try:
+        assert 60001 <= int(line[1]) <= 2699520
+    except AssertionError:
+        try:
+            assert 154931044 <= int(line[1]) <= 155260560
+        except AssertionError:
+            print("{}: Skipped line {} as coordinate {} is not in range of interest".
+                  format(strftime("%d %b %Y %H:%M:%S"), linenum, line[1]))
+            return None
+        else:
+            try:
+                assert line[3] in ["A", "T", "C", "G"]
+                assert line[4] in ["A", "T", "C", "G"]
+            except AssertionError as ae:
+                print("{}: Skipped line {} as it is not biallelic entry".
+                      format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                return None
+            else:  # entry is biallelic and not in ignored region
+                variant_indices = [i for i, entry in enumerate(line[9:])
+                                   if entry in ["0|1", "1|0"]]
+                print("{}: Processed line {}".
+                      format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                return variant_indices
+    else:
+        try:
+            assert line[3] in ["A", "T", "C", "G"]
+            assert line[4] in ["A", "T", "C", "G"]
+        except AssertionError as ae:
+            print("{}: Skipped line {} as it is not biallelic entry".
+                  format(strftime("%d %b %Y %H:%M:%S"), linenum))
+            return None
+        else:  # entry is biallelic and not in ignored region
+            variant_indices = [i for i, entry in enumerate(line[9:])
+                               if entry in ["0|1", "1|0"]]
+            print("{}: Processed line {}".
+                  format(strftime("%d %b %Y %H:%M:%S"), linenum))
+            return variant_indices
+
+
+def get_haploid_htz_counts(line, linenum):
+    """Iterate through dataframe of genotype entries and count 0|1 or 1|0."""
+    line = line.strip().split("\t")
+    print("{}: Processing position {} in line {}".
+          format(strftime("%d %b %Y %H:%M:%S"), line[1], linenum))
+    try:
+        assert 60001 <= int(line[1]) <= 2699520
+    except AssertionError:
+        try:
+            assert 154931044 <= int(line[1]) <= 155260560
+        except AssertionError:    # when coordinates not in the ignore range
+            try:
+                assert line[3] in ["A", "T", "C", "G"]
+                assert line[4] in ["A", "T", "C", "G"]
+            except AssertionError:
+                print("{}: Skipped line {} as it is not biallelic entry".
+                  format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                return None
+            else:  # entry is biallelic and not in ignored region
+                variant_indices = [i for i, entry in enumerate(line[9:])
+                                   if entry in ["0|1", "1|0"]]
+                print("{}: Processed line {}".
+                      format(strftime("%d %b %Y %H:%M:%S"), linenum))
+                return variant_indices
+        else:
+            print("{}: Skipped line {} as coordinate {} is not in range of interest".
+                  format(strftime("%d %b %Y %H:%M:%S"), linenum, line[1]))
+            return None
+    else:
+        print("{}: Skipped line {} as coordinate {} is not in range of interest".
+              format(strftime("%d %b %Y %H:%M:%S"), linenum, line[1]))
+        return None
+
+
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Calculate number of variant sites per "
                                      "genome in ChrX of 1000 genome project.")
     parser.add_argument("-vcf", "--vcf_file", help="Path to input ChrX VCF file")
     parser.add_argument("-md", "--map_fp",
                         help="Metadata mapping file corresponsding to ChrX VCF")
-    parser.add_argument("-g", "--gender", action="store_true",
-                        help="Set this parameter if you need counts for males. Default is"
-                        " False, which will not run a haploid check (required for males)")
+    parser.add_argument("-i", "--include", action="store_true",
+                        help="Supply this parameter to include the 'diploid' coordinates "
+                        "of ChrX in calculations. By default, these coordinates will be "
+                        "excluded.")
     parser.add_argument("-o", "--output_file",
                         help="Save consolidated data a tab-separated file. Provide file "
                         "path and file name with extension.")
@@ -92,6 +162,11 @@ def main():
     #  Obtain non-reference site counts for all individuals
     if args.vcf_file:
         with gzip.open(args.vcf_file, "rb") as vcff:
+            chr_name = args.vcf_file.split(".")[1]
+            try:
+                chr_num = findall(r"(\d+)", chr_name)[0]
+            except IndexError:
+                chr_num = "X"    # when processing ChrX vcf
             for line in vcff:
                 for i, line in enumerate(vcff):
                     try:
@@ -99,12 +174,14 @@ def main():
                         assert line.startswith("#CHROM")
                     except Exception:
                         try:
-                            assert line.startswith("X")
+                            assert line.startswith("{}".format(chr_num))
                         except AssertionError:
                             continue
                         else:
-                            input = [line, args.gender, i]
-                            res = get_variant_counts(*input)
+                            if args.include:
+                                res = get_diploid_htz_counts(line, i)
+                            else:
+                                res = get_haploid_htz_counts(line, i)
                             try:
                                 assert res is not None
                             except AssertionError:
