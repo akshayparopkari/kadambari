@@ -140,6 +140,26 @@ def get_haploid_htz_counts(line, linenum):
         return None
 
 
+def get_autosome_htz_counts(line, linenum):
+    """Iterate through dataframe of genotype entries and count 0|1 or 1|0."""
+    line = line.strip().split("\t")
+    print("{}: Processing position {} in line {}".
+          format(strftime("%d %b %Y %H:%M:%S"), line[1], linenum))
+    try:
+        assert line[3] in ["A", "T", "C", "G"]
+        assert line[4] in ["A", "T", "C", "G"]
+    except AssertionError as ae:
+        print("{}: Skipped line {} as it is not biallelic entry".
+              format(strftime("%d %b %Y %H:%M:%S"), linenum))
+        return None
+    else:  # entry is biallelic and not in ignored region
+        variant_indices = [i for i, entry in enumerate(line[9:])
+                           if entry in ["0|1", "1|0"]]
+        print("{}: Processed line {}".
+              format(strftime("%d %b %Y %H:%M:%S"), linenum))
+        return variant_indices
+
+
 def handle_program_options():
     parser = argparse.ArgumentParser(description="Calculate number of variant sites per "
                                      "genome in ChrX of 1000 genome project.")
@@ -150,6 +170,9 @@ def handle_program_options():
                         help="Supply this parameter to include the 'diploid' coordinates "
                         "of ChrX in calculations. By default, these coordinates will be "
                         "excluded.")
+    parser.add_argument("-a", "--autosomes", action="store_true",
+                        help="Supply this parameter to get heterozygosity counts for all"
+                        " autosomes.")
     parser.add_argument("-o", "--output_file",
                         help="Save consolidated data a tab-separated file. Provide file "
                         "path and file name with extension.")
@@ -180,6 +203,8 @@ def main():
                         else:
                             if args.include:
                                 res = get_diploid_htz_counts(line, i)
+                            elif args.autosomes:
+                                res = get_autosome_htz_counts(line, i)
                             else:
                                 res = get_haploid_htz_counts(line, i)
                             try:
@@ -199,7 +224,7 @@ def main():
         if args.map_fp:
             md_data = pd.read_csv(args.map_fp, sep="\t", index_col=False,
                                   usecols=[0, 1, 2, 3])
-            md_data["variant_counts"] = md_data["sample"].map(variant_data)
+            md_data["htz_counts"] = md_data["sample"].map(variant_data)
             if args.output_file:
                 md_data.to_csv(args.output_file, sep="\t", index=False)
         else:
