@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """
-:Abstract: Plot number of non-reference sites per genome in ChrX of 1000 genome project.
+:Abstract: Plot number of non-reference sites per genome from 1000 genome project.
 :Date: 05/14/2018
 :Author: Akshay Paropkari
 """
 
 import sys
 import argparse
+from re import findall
 err = []
 try:
     import matplotlib as mpl
@@ -36,8 +37,8 @@ except AssertionError:
 
 
 def handle_program_options():
-    parser = argparse.ArgumentParser(description="Plot number of non-reference sites per "
-                                     "genome in ChrX of 1000 genome project.")
+    parser = argparse.ArgumentParser(description="Plot number of heterozygous sites per "
+                                     "genomes for 1000 genome project.")
     parser.add_argument("main_file", help="Input file of non-reference counts. Output "
                         "file fom count_variants.py")
     parser.add_argument("-s", "--savefile",
@@ -66,31 +67,29 @@ def main():
         sys.exit("ERROR\n{}".format(ee))
     if args.gender:
         count_data_df = count_data_df.query("gender == 'male'")
-    else:
+    if not args.gender:
         count_data_df = count_data_df.query("gender == 'female'")
-    count_sorted_df = count_data_df.sort_values(by=["pop", "variant_counts"])
-    x_order = count_sorted_df.groupby(["pop"]).median().sort_values(by="variant_counts")
+    count_sorted_df = count_data_df.sort_values(by=["pop", "htz_counts"])
+    x_order = count_sorted_df.groupby(["pop"]).mean().sort_values(by="htz_counts")
     with mpl.style.context("seaborn-white"):
-        plt.figure(figsize=(12, 8))
+        plt.figure(figsize=(12, 6))
         for entry in x_order.itertuples():
             plt.scatter(entry[0], entry[1], marker="_", s=300,
                         c="k")
         for entry in count_sorted_df.itertuples():
             plt.scatter(entry[2], entry[5], marker=".",
                         c=assigned_colors[entry[2]], edgecolors="face")
-        plt.xlabel("Populations", fontsize=12)
+        chr_num =  findall(r"(\d+)", args.main_file.split("_")[0])[0]
         if args.gender:
-            plt.ylabel("Frequency of non-reference sites in males",
-                       fontsize=12)
+            plt.title("Heterozygosity in male chromosome X samples for all populations",
+                      fontsize=12)
         else:
-            plt.ylabel("Frequency of non-reference sites in females",
-                       fontsize=12)
-        plt.title("Heterozygosity in Chromosome X for all populations", fontsize=12)
+            plt.title("Heterozygosity in chromosome {}".format(chr_num),
+                      fontsize=12)
+        plt.grid(axis="both", linestyle=":")
         plt.tight_layout()
-        plt.grid(axis="y", linestyle=":")
         if args.savefile:
-            plt.savefig(args.savefile, dpi=300, format="svg",
-                        bbox_inches="tight", pad_inches=0.25)
+            plt.savefig(args.savefile, dpi=300, format="svg", bbox_inches="tight")
         else:
             plt.show()
 
