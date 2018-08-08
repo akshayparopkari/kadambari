@@ -34,6 +34,7 @@ Python scripts
   - In process of moving to [_PhyloToAST_](https://github.com/smdabdoub/phylotoast) repo.
 - plot_MA.py
 - plot_ancestry.py
+- plot_autosomal_heterozygosity.py (_1000 Genomes Project_)
 - plot_heterozygosity.py (_1000 Genomes Project_)
 - remove_duplicate_genes.py
 - run_merge_cmd.py
