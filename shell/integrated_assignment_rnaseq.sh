@@ -1,5 +1,10 @@
 #!/usr/bin.bash
 
+# The paths in this file are nonsensical as they represent paths from a now closed/deleted
+# AWS account. Please change the paths to relevant files for your usage. Also note the
+# weblink to the assignment given in the 'Description' section below.
+
+
 #########################################################################################
 # DESCRIPTION
 #
