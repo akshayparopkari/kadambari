@@ -7,11 +7,10 @@
 # Akshay Paropkari
 #
 # VERSION
-# 0.0.5
+# 0.0.6
 ###############################################################################
 
 # library imports
-library(DESeq2)
 library(tools)
 library(UpSetR)
 
@@ -43,10 +42,10 @@ for (f in deseq.res.files) {
   # collect significant upregulated genes in mutant
 
   # significant and upregulated ORFs
-  # message(paste0("COLLECTING SIGNIFICANTLY UPREGULATED ORFs IN ",
-  #                toTitleCase(mutant),"-KO DATA SET"))
-  # expr <- "upregulated"
-  # orf.vec <- row.names(deseq.data)[which(deseq.data$padj < 0.05 & deseq.data$log2FoldChange > 0)]
+  message(paste0("COLLECTING SIGNIFICANTLY UPREGULATED ORFs IN ",
+                 toTitleCase(mutant),"-KO DATA SET"))
+  expr <- "upregulated"
+  orf.vec <- row.names(deseq.data)[which(deseq.data$padj < 0.05 & deseq.data$log2FoldChange > 0)]
 
   # significant and downregulated ORFs
   # message(paste0("COLLECTING SIGNIFICANTLY DOWNREGULATED ORFs IN ",
@@ -55,10 +54,10 @@ for (f in deseq.res.files) {
   # orf.vec <- row.names(deseq.data)[which(deseq.data$padj < 0.05 & deseq.data$log2FoldChange < 0)]
 
   # significant ORFs
-  message(paste0("COLLECTING SIGNIFICANT AND DIFFERENTIALLY EXPRESSED ORFs IN ",
-                 toTitleCase(mutant),"-KO DATA SET"))
-  expr <- "differentially_expressed"
-  orf.vec <- row.names(deseq.data)[which(deseq.data$padj < 0.05)]
+  # message(paste0("COLLECTING SIGNIFICANT AND DIFFERENTIALLY EXPRESSED ORFs IN ",
+  #                toTitleCase(mutant),"-KO DATA SET"))
+  # expr <- "differentially_expressed"
+  # orf.vec <- row.names(deseq.data)[which(deseq.data$padj < 0.05)]
 
   # save ORF list into a list
   message(paste0("SAVING ORF LIST FOR ", toTitleCase(mutant), "-KO DATA SET"))
@@ -69,11 +68,9 @@ for (f in deseq.res.files) {
 
 # save ORF list to file
 fnh <- paste0(input.folder, "/", expr, "_orf_list.csv")
-# lapply(final.list,
-#        function(x) write.table(x = data.frame(x),
-#                                file = fnh,
-#                                append= T, sep='\t' ))
-
+sink(fnh)
+print(final.list, quote = F)
+sink()
 
 # plot upset plot and save as  JPEG file on the Desktop
 # NO SPACES in file name or output folder
