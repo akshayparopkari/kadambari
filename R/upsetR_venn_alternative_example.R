@@ -18,7 +18,7 @@ library(UpSetR)
 # note that all normalized count files need to be in one folder
 # rename normalized count files such as TF_normalized_count.csv
 # i.e. bcr1_normalized_count.csv
-input.folder <- "~/Desktop/upset_priyanka"  # CHANGE THIS TO YOUR INPUT FOLDER LOCATION
+input.folder <- "~/Desktop/input_folder"  # CHANGE THIS TO YOUR INPUT FOLDER LOCATION
 deseq.res.files <- list.files(path = input.folder,
                               pattern = "*_deseq2_output.tsv", full.names = T)
 
