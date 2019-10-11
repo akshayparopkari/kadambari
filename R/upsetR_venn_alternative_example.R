@@ -71,7 +71,8 @@ for (f in deseq.res.files) {
 fnh <- paste0(input.folder, "/", expr, "_orf_list.tsv")
 message(paste0("SAVING ORF LIST DATA TO FILE AT ", fnh))
 final.list.df <- melt(data = final.list, value.name = "orf.ids")
-final.list.df <- dcast(data = df, formula = orf.ids~L1, value.var="orf.ids")
+final.list.df <- dcast(data = final.list.df, formula = orf.ids~L1,
+                       value.var="orf.ids")
 final.list.df$orf.ids <- NULL
 final.list.df$row_sum <- apply(X = final.list.df, MARGIN = 1,
                                     FUN = function(x) length(which(!is.na(x))))
