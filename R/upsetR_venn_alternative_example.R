@@ -7,10 +7,11 @@
 # Akshay Paropkari
 #
 # VERSION
-# 0.0.6
+# 0.0.7
 ###############################################################################
 
 # library imports
+library(reshape2)
 library(tools)
 library(UpSetR)
 
@@ -67,14 +68,19 @@ for (f in deseq.res.files) {
 }
 
 # save ORF list to file
-fnh <- paste0(input.folder, "/", expr, "_orf_list.csv")
-sink(fnh)
-print(final.list, quote = F)
-sink()
+fnh <- paste0(input.folder, "/", expr, "_orf_list.tsv")
+message(paste0("SAVING ORF LIST DATA TO FILE AT ", fnh))
+final.list.df <- melt(data = final.list, value.name = "orf.ids")
+final.list.df <- dcast(data = df, formula = orf.ids~L1, value.var="orf.ids")
+final.list.df$orf.ids <- NULL
+final.list.df$row_sum <- apply(X = final.list.df, MARGIN = 1,
+                                    FUN = function(x) length(which(!is.na(x))))
+write.table(x = final.list.df, file = fnh, quote = F, sep = "\t", row.names = F)
 
 # plot upset plot and save as  JPEG file on the Desktop
 # NO SPACES in file name or output folder
 image.fnh <- paste0(input.folder, "/", expr, "_orf_upset_plot.jpeg")
+message(paste0("SAVING UPSET PLOT TO FILE AT ", image.fnh))
 jpeg(filename = image.fnh, width = 21, height = 9, units = "in", res=300)
 upset(data = fromList(final.list), nsets = 100, nintersects = NA,
       order.by = "freq", point.size = 4,
