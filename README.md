@@ -46,9 +46,11 @@ R scripts
 ---------
 - LDA.R
 - PCA.R
+- upsetR_venn_alternative_example.R
 
 Bash scripts
 ------------
 - concat_R1_R2_files.sh
 - get_R1_R2_md5.sh
+- integrated_assignment_rnaseq.sh (from CSHL course)
 - runpy.sh
