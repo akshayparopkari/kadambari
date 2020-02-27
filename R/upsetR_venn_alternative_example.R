@@ -7,7 +7,7 @@
 # Akshay Paropkari
 #
 # VERSION
-# 0.0.7
+# 0.0.8
 ###############################################################################
 
 # library imports
@@ -15,12 +15,11 @@ library(reshape2)
 library(tools)
 library(UpSetR)
 
-# note that all normalized count files need to be in one folder
-# rename normalized count files such as TF_normalized_count.csv
-# i.e. bcr1_normalized_count.csv
+# note that all deseq2 tab-separated output files must end with "_deseq2_output.tsv"
+# and be available inside <INPUT DIRECTORY>
 input.folder <- <INPUT_DIRECTORY> # CHANGE THIS TO YOUR INPUT FOLDER LOCATION
-deseq.res.files <- list.files(path = input.folder,
-                              pattern = "*_deseq2_output.tsv", full.names = T)
+deseq.res.files <- list.files(path = input.folder, pattern = "*_deseq2_output.tsv",
+                              full.names = T)
 
 # initiate list to save all significant ORFs
 final.list <- list()
@@ -28,11 +27,15 @@ final.list <- list()
 # iterate through all files in input folder, and calculate significantly
 # upregulated ORFs
 for (f in deseq.res.files) {
-  mutant <- unlist(strsplit(x = unlist(strsplit(x = f,
-                                                split = "/"))[6],
-                            split = "_"))[1]
+  message(paste0("PROCESSING ", f))
+  if (length(unlist(strsplit(x = f, split = "/"))) == 2) {
+    mutant <- unlist(strsplit(x = f, split = "/"))[2]
+  } else {
+    mutant <- unlist(strsplit(x = f, split = "/"))[1]
+  }
+  mutant <- unlist(strsplit(mutant, split = "_"))[1]
   message(paste0("FORMATTING ", toTitleCase(mutant),"-KO DATA SET"))
-  deseq.data <- read.csv(file = f, sep = "\t", header = T)
+  deseq.data <- read.csv(file = f, sep = "\t", header = T, row.names = 1)
 
   # consider entries with ORF ids only
   deseq.data <- deseq.data[grep(pattern = "^orf*", x = rownames(deseq.data)), ]
