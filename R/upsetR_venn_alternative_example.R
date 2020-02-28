@@ -7,7 +7,7 @@
 # Akshay Paropkari
 #
 # VERSION
-# 0.0.8
+# 0.0.9
 ###############################################################################
 
 # library imports
@@ -18,7 +18,8 @@ library(UpSetR)
 # note that all deseq2 tab-separated output files must end with "_deseq2_output.tsv"
 # and be available inside <INPUT DIRECTORY>
 input.folder <- <INPUT_DIRECTORY> # CHANGE THIS TO YOUR INPUT FOLDER LOCATION
-deseq.res.files <- list.files(path = input.folder, pattern = "*_deseq2_output.tsv",
+setwd(input.folder)
+deseq.res.files <- list.files(path = ".", pattern = "*_deseq2_output.tsv",
                               full.names = T)
 
 # initiate list to save all significant ORFs
