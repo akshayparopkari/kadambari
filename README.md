@@ -1,4 +1,4 @@
-[![LICENSE](https://img.shields.io/badge/License-New--BSD-blue.svg?style=plastic)](https://github.com/akshayparopkari/kadambari/blob/master/LICENSE)
+[![LICENSE](https://img.shields.io/github/license/akshayparopkari/kadambari)](https://github.com/akshayparopkari/kadambari/blob/master/LICENSE) ![STARS](https://img.shields.io/github/stars/akshayparopkari/kadambari) ![FORKS](https://img.shields.io/github/forks/akshayparopkari/kadambari)
 
 Welcome to the kadambari!
 ==============================
